@@ -2,7 +2,6 @@
 // Created by Turner Trowbridge on 1/21/23.
 //
 #include "dictionary.h"
-#include "map"
 
 using namespace std;
 
@@ -15,5 +14,8 @@ int main(int argc, char **argv) {
 //        cout << "{'" << letters[i + 1] << "', " << j << "}, ";
 //        j++;
 //    }
+    const char* word = "batman";
+    dictionary node = dictionary();
+    cout << "Inserted " << node.add(word);
 
 };
