@@ -27,9 +27,6 @@
 
 // insert new word
 bool dictNode::add(const char *wordBeingInserted) {
-//    if(strlen(wordBeingInserted) == 0 ){
-//        return false;
-//    }
     dictNode* node = new dictNode();
     addNewWordRecursively(node, wordBeingInserted);
     return true;
@@ -38,11 +35,19 @@ bool dictNode::add(const char *wordBeingInserted) {
 
 void dictNode::addNewWordRecursively(dictNode *node, const char *wordBeingInserted) {
     // convert char in word to predefined int
+
+
     int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
 
-    if (next[charIndex] == nullptr){
+    // if end of string character found, return
+    if(charIndex == 29){
+        node->next[charIndex] = new dictNode();
+        return;
+    }
+
+    if (node->next[charIndex] == nullptr){
         // insert new node for char
-        next[charIndex] = new dictNode();
+        node->next[charIndex] = new dictNode();
     }
     // recursive call to add next char in word
     addNewWordRecursively(node->next[charIndex], wordBeingInserted + 1);
