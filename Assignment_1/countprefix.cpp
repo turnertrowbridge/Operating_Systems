@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 //        j++;
 //    }
     const char* word = "batman";
-    dictionary node = dictionary();
+    dictNode node = dictNode();
     cout << "Inserted " << node.add(word);
 
 };

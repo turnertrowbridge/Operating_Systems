@@ -15,7 +15,7 @@ class dictNode {
 private:
     // children
     dictNode *next[NCHILD];
-    void addNewWordRecursively(dictNode* node, const char *wordBeingInserted, int i);
+
     dictNode *findEndingNodeOfAStrRecursively(dictNode* node, const char *strBeingSearched);
 public:
     // default constructor
@@ -24,8 +24,10 @@ public:
             this->next[i] = nullptr;
         }
     };
+    void addNewWordRecursively(dictNode* node, const char *wordBeingInserted);
 
     // add new word
+    bool add(const char *wordBeingInserted = nullptr);
 
     // find end node
     dictNode *findEndingNodeOfAStr(const char *strBeingSearched);
@@ -37,7 +39,7 @@ private:
     static unordered_map<char, int> wordHashTable;
 
 public:
-    bool add(const char *wordBeingInserted = nullptr);
+
     static int getHashMapValue(char c);
     void countWordsStartingFromANode(int &count);
 };

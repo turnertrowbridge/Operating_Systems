@@ -4,58 +4,49 @@
 
 #include "dictionary.h"
 
-bool dictionary::add(const char *wordBeingInserted) {
+//bool dictNode::add(const char *wordBeingInserted) {
+//
+//    if(strlen(wordBeingInserted) == 0){
+//        return false;
+//    }
+//
+//    // convert char in word to predefined int
+//    int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
+//
+//    // check if char has not been inserted
+//    if (next[charIndex] == nullptr){
+//        // insert new node for char
+//        next[charIndex] = new dictNode();
+//    }
+//    next[charIndex];
+//    // recursive call to add next char in word
+//    add(++wordBeingInserted);
+//    return true;
+//};
 
-    if(strlen(wordBeingInserted) == 0){
-        return false;
-    }
 
-    // convert char in word to predefined int
-    int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
-
-    // check if char has not been inserted
-    if (next[charIndex] == nullptr){
-        // insert new node for char
-        next[charIndex] = new dictNode();
-    }
-    dictNode = next;
-    // recursive call to add next char in word
-    add(++wordBeingInserted);
+// insert new word
+bool dictNode::add(const char *wordBeingInserted) {
+//    if(strlen(wordBeingInserted) == 0 ){
+//        return false;
+//    }
+    dictNode* node = new dictNode();
+    addNewWordRecursively(node, wordBeingInserted);
     return true;
 };
 
 
-//// insert new word
-//bool dictNode::add(const char *wordBeingInserted) {
-//    if(strlen(wordBeingInserted) == 0 ){
-//        return false;
-//    }
-//
-//    dictNode* node = new dictNode();
-//    addNewWordRecursively(node, wordBeingInserted, 0);
-//    return true;
-//};
-//
-//
-//void dictNode::addNewWordRecursively(dictNode *node, const char *wordBeingInserted, int i) {
-//
-//    // check if all chars have been checked in word
-//    if (i > strlen(wordBeingInserted)) {
-//        return;
-//    }
-//
-//    // convert char in word to predefined int
-//    int charIndex = dictionary::getHashMapValue(wordBeingInserted[i]);
-//
-//    // check if char has not been inserted
-//    if (node->next[charIndex] == nullptr){
-//        // insert new node for char
-//        node->next[charIndex] = new dictNode();
-//    }
-//
-//    // recursive call to add next char in word
-//    addNewWordRecursively(node->next[charIndex], wordBeingInserted, ++i);
-//};
+void dictNode::addNewWordRecursively(dictNode *node, const char *wordBeingInserted) {
+    // convert char in word to predefined int
+    int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
+
+    if (next[charIndex] == nullptr){
+        // insert new node for char
+        next[charIndex] = new dictNode();
+    }
+    // recursive call to add next char in word
+    addNewWordRecursively(node->next[charIndex], wordBeingInserted + 1);
+};
 
 // convert char to it's corresponding int
 int dictionary::getHashMapValue(char c) {
