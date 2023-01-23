@@ -38,7 +38,7 @@ private:
     static unordered_map<char, int> wordHashTable;
 
 public:
-
+    static bool isInHashMap(char c);
     static int getHashMapValue(char c);
     void countWordsStartingFromANode(int &count);
 };

@@ -12,7 +12,10 @@ int dictionary::getHashMapValue(char c) {
 // insert new word
 bool dictNode::add(const char *wordBeingInserted) {
     // convert char in word to predefined int
-    int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
+    if(dictionary::isInHashMap(*wordBeingInserted)){
+        int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
+
+
 
     // if end of string character found, add word terminator and return
     if(charIndex == 29){
@@ -31,6 +34,10 @@ bool dictNode::add(const char *wordBeingInserted) {
 
     // recursive call to add next char in word
     return this->next[charIndex]->add(++wordBeingInserted);
+
+    } else {
+        return false;
+    }
 };
 
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
@@ -134,3 +141,10 @@ unordered_map<char, int> dictionary::wordHashTable = {
         {'_', 28},
         {'\0', 29}
 };
+
+bool dictionary::isInHashMap(char c) {
+    if (wordHashTable.find(c) == wordHashTable.end()){
+        return false;
+    }
+    return true;
+}
