@@ -16,8 +16,13 @@ int main(int argc, char **argv) {
 //    }
     const char* word = "batman";
     dictNode *head = new dictNode();
-    cout << head->add("batman") << endl;
-    cout << "Found " << head->findEndingNodeOfAStr("bat");
+    head->add("batman");
+    head->add("batdog");
+    head->add("batdude");
+    head->add("bats");
+    head->findEndingNodeOfAStr("bat");
+    int count = 0;
+    head->countWordsStartingFromANode(count);
     cout << "hi";
 
 };

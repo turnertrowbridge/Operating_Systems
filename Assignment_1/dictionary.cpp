@@ -30,6 +30,7 @@ bool dictNode::add(const char *wordBeingInserted) {
 };
 
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
+    // convert char in word to predefined int
     int charIndex = dictionary::getHashMapValue(*strBeingSearched);
 
     // if end of string character found, add word terminator and return
@@ -47,7 +48,18 @@ dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
 }
 
 void dictNode::countWordsStartingFromANode(int &count) {
+    // find word terminator
+    if (this->next[29]){
+        count++;
+        return;
+    }
 
+    // find nodes that aren't null and search until a word terminator is found
+    for(auto node : this->next){
+        if (node){
+            node->countWordsStartingFromANode(count);
+        }
+    }
 };
 
 
