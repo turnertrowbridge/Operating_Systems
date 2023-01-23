@@ -20,9 +20,11 @@ int main(int argc, char **argv) {
     head->add("batdog");
     head->add("batdude");
     head->add("bats");
-    head->findEndingNodeOfAStr("bat");
+    head->add("mike");
+    head->add("tyson");
+    dictNode* bat = head->findEndingNodeOfAStr("bat");
     int count = 0;
-    head->countWordsStartingFromANode(count);
-    cout << "hi";
+    bat->countWordsStartingFromANode(count);
+    cout << "bat " << count << endl;
 
 };

@@ -16,8 +16,12 @@ bool dictNode::add(const char *wordBeingInserted) {
 
     // if end of string character found, add word terminator and return
     if(charIndex == 29){
+        if (this->next[charIndex]){
+            return false;
+        } else {
         this->next[charIndex] = new dictNode();
         return true;
+        }
     }
 
     // create new node at charIndex if no node already exists
@@ -58,6 +62,7 @@ void dictNode::countWordsStartingFromANode(int &count) {
     for(auto node : this->next){
         if (node){
             node->countWordsStartingFromANode(count);
+        } else {
         }
     }
 };
