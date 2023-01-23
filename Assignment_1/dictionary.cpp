@@ -44,12 +44,14 @@ bool dictNode::add(const char *wordBeingInserted) {
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     // convert char in word to predefined int
     int charIndex = dictionary::getHashMapValue(*strBeingSearched);
-    if (::strlen(strBeingSearched) == 0){
+
+    // bug if word isn't in tree
+    if (strlen(strBeingSearched) == 0){
         return this;
     }
     // check if word has no more matches
     if (this->next[charIndex] == nullptr){
-        return this;
+        return nullptr;
     }
 
     // recursive call to find next char in word
@@ -57,10 +59,12 @@ dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
 }
 
 void dictNode::countWordsStartingFromANode(int &count) {
+    // checks to stop a search from happening if word was not found
+    if (this == nullptr){
+        return;
+    }
 
-
-
-    // find nodes that aren't null and search until a word terminator is found
+    // count if word terminator is found
     if (this->next[29]){
         count++;
     }
@@ -70,14 +74,6 @@ void dictNode::countWordsStartingFromANode(int &count) {
             node->countWordsStartingFromANode(count);
         }
     }
-};
-
-
-
-
-// count number of words in a tree that start from a node
-void dictionary::countWordsStartingFromANode(int &count) {
-
 };
 
 
@@ -134,7 +130,7 @@ unordered_map<char, int> dictionary::wordHashTable = {
         {'y', 24},
         {'Z', 25},
         {'z', 25},
-        {',', 26},
+        {39, 26},
         {'-', 27},
         {'_', 28},
         {'\0', 29}

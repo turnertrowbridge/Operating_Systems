@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <string>
+#include <cstring>
 //
 // Created by Turner Trowbridge on 1/21/23.
 //
@@ -40,7 +41,6 @@ private:
 public:
     static bool isInHashMap(char c);
     static int getHashMapValue(char c);
-    void countWordsStartingFromANode(int &count);
 };
 
 

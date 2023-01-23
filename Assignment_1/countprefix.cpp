@@ -10,18 +10,6 @@ using namespace std;
 
 
 int main(int argc, char **argv) {
-//    const char* word = "batman";
-//    dictNode *head = new dictNode();
-//    head->add("batman");
-//    head->add("batdog");
-//    head->add("batdude");
-//    head->add("bat");
-//    head->add("mike");
-//    head->add("tyson");
-//    dictNode* bat = head->findEndingNodeOfAStr("bat");
-//    int count = 0;
-//    bat->countWordsStartingFromANode(count);
-//    cout << "bat " << count << endl;
 
     if (argc == 3){
         const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";
@@ -36,6 +24,22 @@ int main(int argc, char **argv) {
                     try{
                         int count = 0;
                         root->add(word);
+                    }catch(exception e) {
+                    }
+                    word = strtok(nullptr, delimiters);
+                }
+            }
+        }
+
+        ifstream readstream(argv[2]);
+        string line1;
+        while(getline(readstream, line1)){
+            char* line_c = const_cast<char*>(line1.c_str());
+            char* word = strtok(line_c, delimiters);
+            {
+                while (word != nullptr){
+                    try{
+                        int count = 0;
                         dictNode *end = root->findEndingNodeOfAStr(word);
                         end->countWordsStartingFromANode(count);
                         cout << word << " " << count << endl;
@@ -45,25 +49,6 @@ int main(int argc, char **argv) {
                 }
             }
         }
-
-//        ifstream readstream(argv[2]);
-//        string line1;
-//        while(getline(readstream, line1)){
-//            char* line_c = const_cast<char*>(line1.c_str());
-//            char* word = strtok(line_c, delimiters);
-//            {
-//                while (word != nullptr){
-//                    try{
-//                        int count = 0;
-//                        dictNode *end = root->findEndingNodeOfAStr(word);
-//                        end->countWordsStartingFromANode(count);
-//                        cout << word << " " << count << endl;
-//                    }catch(exception e) {
-//                    }
-//                    word = strtok(nullptr, delimiters);
-//                }
-//            }
-//        }
 
 
 
