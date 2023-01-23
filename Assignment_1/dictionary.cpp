@@ -27,17 +27,21 @@
 
 // insert new word
 bool dictNode::add(const char *wordBeingInserted) {
-    if (strlen(wordBeingInserted) == 0){
-        return false;
-    }
-//    dictNode* node = this;
     // convert char in word to predefined int
     int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
 
+    // if end of string character found, add word terminator and return
+    if(charIndex == 29){
+        this->next[charIndex] = new dictNode();
+        return true;
+    }
+
+    // create new node at charIndex if no node already exists
     if (this->next[charIndex] == nullptr){
         this->next[charIndex] = new dictNode();
     }
 
+    // recursive call to add next char in word
     this->next[charIndex]->add(++wordBeingInserted);
     return true;
 };
