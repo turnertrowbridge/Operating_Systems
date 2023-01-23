@@ -15,7 +15,8 @@ int main(int argc, char **argv) {
 //        j++;
 //    }
     const char* word = "batman";
-    dictNode node = dictNode();
-    cout << "Inserted " << node.add(word);
+    dictNode *head = new dictNode();
+    cout << head->add("batman") << endl;
+//    cout << "Found " << head->findEndingNodeOfAStr("bat");
 
 };

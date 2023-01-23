@@ -15,8 +15,7 @@ class dictNode {
 private:
     // children
     dictNode *next[NCHILD];
-
-    dictNode *findEndingNodeOfAStrRecursively(dictNode* node, const char *strBeingSearched);
+//    dictNode* findEndRecursively(dictNode *node, const char *strBeingSearched);
 public:
     // default constructor
     dictNode(){
@@ -24,7 +23,6 @@ public:
             this->next[i] = nullptr;
         }
     };
-    void addNewWordRecursively(dictNode* node, const char *wordBeingInserted);
 
     // add new word
     bool add(const char *wordBeingInserted = nullptr);
