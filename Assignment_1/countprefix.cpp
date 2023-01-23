@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 //    head->add("batman");
 //    head->add("batdog");
 //    head->add("batdude");
-//    head->add("bats");
+//    head->add("bat");
 //    head->add("mike");
 //    head->add("tyson");
 //    dictNode* bat = head->findEndingNodeOfAStr("bat");
@@ -36,10 +36,10 @@ int main(int argc, char **argv) {
                 while (word != nullptr){
                     try{
                         int count = 0;
-                        dictNode *head = new dictNode();
+                        dictNode *head;
                         head->add(word);
-                        head = head->findEndingNodeOfAStr(word);
-                        head->countWordsStartingFromANode(count);
+                        dictNode *end = head->findEndingNodeOfAStr(word);
+                        end->countWordsStartingFromANode(count);
                         cout << word << " " << count << endl;
                     }catch(exception e) {
                     }

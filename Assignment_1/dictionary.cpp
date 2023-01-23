@@ -62,7 +62,6 @@ void dictNode::countWordsStartingFromANode(int &count) {
     // find word terminator
     if (this->next[29]){
         count++;
-        return;
     }
 
     // find nodes that aren't null and search until a word terminator is found
