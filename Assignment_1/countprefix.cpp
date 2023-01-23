@@ -11,7 +11,10 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
+
     if (argc == 3){
+        dictionary* D = new dictionary;
+        D.setWordHashTable();
         const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";
         dictNode *root = new dictNode();
         ifstream dictstream(argv[1]);
@@ -22,7 +25,6 @@ int main(int argc, char **argv) {
             {
                 while (word != nullptr){
                     try{
-                        int count = 0;
                         root->add(word);
                     }catch(exception e) {
                     }
@@ -57,4 +59,5 @@ int main(int argc, char **argv) {
     } else{
         cout << "Invalid amount of arguments" << endl;
     }
+
 };

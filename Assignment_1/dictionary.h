@@ -41,6 +41,7 @@ private:
 public:
     static bool isInHashMap(char c);
     static int getHashMapValue(char c);
+    static void setWordHashTable();
 };
 
 
