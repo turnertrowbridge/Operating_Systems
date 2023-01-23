@@ -30,6 +30,7 @@ public:
     // find end node
     dictNode *findEndingNodeOfAStr(const char *strBeingSearched);
 
+    void countWordsStartingFromANode(int &count);
 };
 
 class dictionary {

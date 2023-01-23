@@ -26,40 +26,29 @@ bool dictNode::add(const char *wordBeingInserted) {
     }
 
     // recursive call to add next char in word
-    this->next[charIndex]->add(++wordBeingInserted);
-    return true;
+    return this->next[charIndex]->add(++wordBeingInserted);
 };
 
+dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
+    int charIndex = dictionary::getHashMapValue(*strBeingSearched);
 
-// find node that ends in the prefix
-//dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched) {
-//    if (strlen(strBeingSearched) == 0){
-//        return nullptr;
-//    }
-//    int charIndex = dictionary::getHashMapValue(*strBeingSearched);
-//
-//    dictNode* node = node->next[charIndex];
-//    findEndingNodeOfAStr(++strBeingSearched);
-//    return node;
-//};
+    // if end of string character found, add word terminator and return
+    if(charIndex == 29){
+        return this;
+    }
 
-//dictNode* dictNode::findEndRecursively(dictNode *node, const char *strBeingSearched){
-//    int charIndex = dictionary::getHashMapValue(*strBeingSearched);
-//
-//    // if end of string character found, add word terminator and return
-//    if(charIndex == 29){
-//        return node;
-//    }
-//
-//    // check if word has no more matches
-//    if (node->next[charIndex] == nullptr){
-//        return nullptr;
-//    }
-//
-//    // recursive call to find next char in word
-//    findEndRecursively(node->next[charIndex], ++strBeingSearched);
-//    return node;
-//};
+    // check if word has no more matches
+    if (this->next[charIndex] == nullptr){
+        return nullptr;
+    }
+
+    // recursive call to find next char in word
+    return this->next[charIndex]->findEndingNodeOfAStr(++strBeingSearched);
+}
+
+void dictNode::countWordsStartingFromANode(int &count) {
+
+};
 
 
 
