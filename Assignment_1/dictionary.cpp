@@ -33,7 +33,8 @@ bool dictNode::add(const char *wordBeingInserted) {
     }
 
     // recursive call to add next char in word
-    return this->next[charIndex]->add(++wordBeingInserted);
+    this->next[charIndex]->add(++wordBeingInserted);
+    return true;
 
     } else {
         return false;
@@ -43,15 +44,12 @@ bool dictNode::add(const char *wordBeingInserted) {
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     // convert char in word to predefined int
     int charIndex = dictionary::getHashMapValue(*strBeingSearched);
-
-    // if end of string character found, add word terminator and return
-    if(charIndex == 29){
+    if (::strlen(strBeingSearched) == 0){
         return this;
     }
-
     // check if word has no more matches
     if (this->next[charIndex] == nullptr){
-        return nullptr;
+        return this;
     }
 
     // recursive call to find next char in word
@@ -59,16 +57,17 @@ dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
 }
 
 void dictNode::countWordsStartingFromANode(int &count) {
-    // find word terminator
+
+
+
+    // find nodes that aren't null and search until a word terminator is found
     if (this->next[29]){
         count++;
     }
 
-    // find nodes that aren't null and search until a word terminator is found
     for(auto node : this->next){
         if (node){
             node->countWordsStartingFromANode(count);
-        } else {
         }
     }
 };
