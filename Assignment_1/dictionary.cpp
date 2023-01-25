@@ -1,29 +1,25 @@
 //
 // Created by Turner Trowbridge on 1/21/23.
 //
-
 #include "dictionary.h"
 
-// convert char to it's corresponding int
-int dictionary::getHashMapValue(char c) {
+// convert char to its corresponding int
+int hashTable::getHashMapValue(char c) {
     return wordHashTable.at((c));
 };
+
 
 // insert new word
 bool dictNode::add(const char *wordBeingInserted) {
     // convert char in word to predefined int
-    if(dictionary::isInHashMap(*wordBeingInserted)){
-        int charIndex = dictionary::getHashMapValue(*wordBeingInserted);
-
-
+    int charIndex = hashTable::getHashMapValue(*wordBeingInserted);
 
     // if end of string character found, add word terminator and return
     if(charIndex == 29){
         if (this->next[charIndex]){
             return false;
         } else {
-        this->next[charIndex] = new dictNode();
-        return true;
+        return this->next[charIndex] = new dictNode();
         }
     }
 
@@ -33,22 +29,19 @@ bool dictNode::add(const char *wordBeingInserted) {
     }
 
     // recursive call to add next char in word
-    this->next[charIndex]->add(++wordBeingInserted);
-    return true;
-
-    } else {
-        return false;
-    }
+    return this->next[charIndex]->add(++wordBeingInserted);
 };
+
 
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     // convert char in word to predefined int
-    int charIndex = dictionary::getHashMapValue(*strBeingSearched);
+    int charIndex = hashTable::getHashMapValue(*strBeingSearched);
 
-    // bug if word isn't in tree
+    // return node if end of word
     if (strlen(strBeingSearched) == 0){
         return this;
     }
+
     // check if word has no more matches
     if (this->next[charIndex] == nullptr){
         return nullptr;
@@ -58,18 +51,21 @@ dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     return this->next[charIndex]->findEndingNodeOfAStr(++strBeingSearched);
 }
 
+
 void dictNode::countWordsStartingFromANode(int &count) {
-    // checks to stop a search from happening if word was not found
+    // stops a search from happening if word was not found
     if (this == nullptr){
         return;
     }
 
-    // count if word terminator is found
+    // increase count if word terminator is found
     if (this->next[29]){
         count++;
     }
 
+    // loop through all child nodes to check to see if they have their own child nodes
     for(auto node : this->next){
+        // if a child node is found, recurse to search no more can be found
         if (node){
             node->countWordsStartingFromANode(count);
         }
@@ -77,7 +73,7 @@ void dictNode::countWordsStartingFromANode(int &count) {
 };
 
 
-unordered_map<char, int> dictionary::wordHashTable = {
+const unordered_map<char, int> hashTable::wordHashTable = {
         {'A', 0},
         {'a', 0},
         {'B', 1},
@@ -130,15 +126,8 @@ unordered_map<char, int> dictionary::wordHashTable = {
         {'y', 24},
         {'Z', 25},
         {'z', 25},
-        {39, 26},
+        {39, 26},   // apostrophe
         {'-', 27},
         {'_', 28},
-        {'\0', 29}
+        {'\0', 29}  // word terminator
 };
-
-bool dictionary::isInHashMap(char c) {
-    if (wordHashTable.find(c) == wordHashTable.end()){
-        return false;
-    }
-    return true;
-}

@@ -1,10 +1,10 @@
-#include <unordered_map>
-#include <iostream>
-#include <string>
-#include <cstring>
 //
 // Created by Turner Trowbridge on 1/21/23.
 //
+#include <unordered_map>
+#include <iostream>
+#include <cstring>
+
 using namespace std;
 
 #ifndef ASSIGNMENT_1_DICTIONARY_H
@@ -16,32 +16,22 @@ class dictNode {
 private:
     // children
     dictNode *next[NCHILD];
-//    dictNode* findEndRecursively(dictNode *node, const char *strBeingSearched);
 public:
-    // default constructor
-    dictNode(){
-        for(int i = 0; i < NCHILD; i++){
-            this->next[i] = nullptr;
-        }
-    };
-
     // add new word
     bool add(const char *wordBeingInserted = nullptr);
 
     // find end node
     dictNode *findEndingNodeOfAStr(const char *strBeingSearched);
 
+    // get all the number of words that branch off from a node
     void countWordsStartingFromANode(int &count);
 };
 
-class dictionary {
+class hashTable {
 private:
-    static unordered_map<char, int> wordHashTable;
-
+     static const unordered_map<char, int> wordHashTable;
 public:
-    static bool isInHashMap(char c);
     static int getHashMapValue(char c);
 };
-
 
 #endif //ASSIGNMENT_1_DICTIONARY_H
