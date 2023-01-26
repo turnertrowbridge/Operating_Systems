@@ -15,7 +15,7 @@ bool dictNode::add(const char *wordBeingInserted) {
     int charIndex = hashTable::getHashMapValue(*wordBeingInserted);
 
     // if end of string character found, add word terminator and return
-    if(charIndex == 29){
+    if(charIndex == hashTable::getHashMapValue('\0')){
         if (this->next[charIndex]){
             return false;
         } else {
@@ -59,7 +59,7 @@ void dictNode::countWordsStartingFromANode(int &count) {
     }
 
     // increase count if word terminator is found
-    if (this->next[29]){
+    if (this->next[hashTable::getHashMapValue('\0')]){
         count++;
     }
 
