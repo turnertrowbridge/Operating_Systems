@@ -1,6 +1,11 @@
-//
-// Created by Turner Trowbridge on 1/21/23.
-//
+/*
+ * Single Programmer Affidavit
+ * I the undersigned promise that the submitted assignment is my own work. While I was free to discuss ideas with
+ * others, the work contained is my own. I recognize that should this not be the case; I will be subject to penalties
+ * as outlined in the course syllabus.
+ * Name: Turner Trowbridge Red ID: 827959204
+ * Date: 01/25/2023
+ */
 #include "dictionary.h"
 #include <fstream>
 #include <cstring>
