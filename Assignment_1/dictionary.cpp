@@ -4,8 +4,6 @@
 //
 #include "dictionary.h"
 
-#define APOSTROPHE 39
-#define WORD_TERMINATOR '\0'
 
 // convert char to its corresponding int
 int hashTable::getHashMapValue(char c) {

@@ -10,6 +10,8 @@ using namespace std;
 #ifndef ASSIGNMENT_1_DICTIONARY_H
 #define ASSIGNMENT_1_DICTIONARY_H
 #define NCHILD 30 /* a-z, ', -, _, terminator of word */
+#define APOSTROPHE 39
+#define WORD_TERMINATOR '\0'
 
 
 class dictNode {
