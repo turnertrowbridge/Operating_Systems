@@ -9,13 +9,63 @@
 #include "dictionary.h"
 #include <fstream>
 #include <cstring>
+#include <unistd.h>
 
 using namespace std;
 
 
 int main(int argc, char **argv) {
-    // check if valid number of arguments
-    if (argc == 3){
+    int opt;
+    optind = 3; // get optional arguments starting at fourth index
+    int numOfPrefixes = 1;  // set by -p, default value of 1
+    int numOfHashMarkSpaces = 10;  // set by -h, default value of 10
+    int numOfProgressMarks = 50;  // set by -n, default value of 50
+
+    // get optional arguments
+    while((opt = getopt(argc, argv, "p:h:n:")) != -1){\
+
+        // make sure there is an argument after last option
+        if (optarg == NULL){
+            cout << "Error, include argument after option" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        int optargInt = atoi(optarg);
+
+        switch (opt){
+            case 'p':
+                if (optargInt >= 10) {  // min of 10
+                    numOfProgressMarks = optargInt;
+                } else {
+                    cout << "Number of progress marks must be a number and at least 10" << endl;
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            case 'h':
+                if (optargInt > 0 && optargInt <= 10) { // greater than 0 less than or equal to 10
+                    numOfHashMarkSpaces = optargInt;
+                } else {
+                    cout << "Hash mark interval for progress must be a number, greater than 0,"
+                            " and less than or equal to 10";
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            case 'n':
+                if (optargInt >= 0) {  // greater than or equal to 0
+                    break;
+                } else {
+                    cout << "Prefix print count must be a number and greater than 0";
+                    exit(EXIT_FAILURE);
+                }
+            default:
+                cout << "Error, check optional arguments." << endl;
+                exit(EXIT_FAILURE);
+        }
+    }
+
+
+    // get manual arguments
+    if (argc > 2){
         dictNode *root = new (dictNode); // create root node and initialize pointers to nullptr
 
         const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";  // separates words
@@ -25,7 +75,8 @@ int main(int argc, char **argv) {
         ifstream addstream(argv[1]);
 
         if (addstream.fail()){
-            cout << "File could not be opened" << endl;
+            cout << "Unable to open <<" << argv[1] << ">>" << endl;
+            exit(EXIT_FAILURE);
         } else {
 
             // reads file line by line and adds to tree word by word
@@ -45,7 +96,8 @@ int main(int argc, char **argv) {
         ifstream countstream(argv[2]);
 
         if (countstream.fail()){
-            cout << "File could not be opened" << endl;
+            cout << "Unable to open <<" << argv[2] << ">>" << endl;
+            exit(EXIT_FAILURE);
         } else {
 
             // reads file line by line and counts the # of words in the tree based on prefixes supplied in file
