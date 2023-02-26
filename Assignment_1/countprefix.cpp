@@ -17,22 +17,22 @@ using namespace std;
 int main(int argc, char **argv) {
     int opt;
     optind = 3;
-    int numOfProgressMarks = 50; // default value of 50
-    int numOfHashMarkSpaces = 10; // default value of 10
     int numOfPrefixes = 1; // default value of 1
+    int numOfHashMarkSpaces = 10; // default value of 10
+    int numOfProgressMarks = 50; // default value of 50
 
     while((opt = getopt(argc, argv, "p:h:n:")) != -1){
         switch (opt){
             case 'p':
-                numOfProgressMarks = opt;
+                numOfProgressMarks = atoi(optarg);
                 cout << "num of progress marks: " << optarg << endl;
                 break;
             case 'h':
-                numOfHashMarkSpaces = opt;
+                numOfHashMarkSpaces = atoi(optarg);
                 cout << "num of hash marks spaces: " << optarg << endl;
                 break;
             case 'n':
-                numOfPrefixes = opt;
+                numOfPrefixes = atoi(optarg);
                 cout << "prefix count: " << optarg << endl;
                 break;
             default:
