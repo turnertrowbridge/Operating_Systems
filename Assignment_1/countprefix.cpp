@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
         ifstream addstream(argv[1]);
 
         if (addstream.fail()){
-            cout << "Unable to open file <<" << argv[1] << ">>" << endl;
+            cout << "Unable to open <<" << argv[1] << ">>" << endl;
             exit(EXIT_FAILURE);
         } else {
 
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
         ifstream countstream(argv[2]);
 
         if (countstream.fail()){
-            cout << "Unable to open file <<" << argv[2] << ">>" << endl;
+            cout << "Unable to open <<" << argv[2] << ">>" << endl;
             exit(EXIT_FAILURE);
         } else {
 
