@@ -1,7 +1,11 @@
 //
 // Created by Turner Trowbridge on 1/21/23.
+// Updated 2/26/23
 //
 #include "dictionary.h"
+
+#define APOSTROPHE 39
+#define WORD_TERMINATOR '\0'
 
 // convert char to its corresponding int
 int hashTable::getHashMapValue(char c) {
@@ -126,8 +130,8 @@ const unordered_map<char, int> hashTable::wordHashTable = {
         {'y', 24},
         {'Z', 25},
         {'z', 25},
-        {39, 26},   // apostrophe
+        {APOSTROPHE, 26},
         {'-', 27},
         {'_', 28},
-        {'\0', 29}  // word terminator
+        {WORD_TERMINATOR, 29}
 };
