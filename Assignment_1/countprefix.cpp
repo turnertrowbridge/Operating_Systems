@@ -36,7 +36,6 @@ int main(int argc, char **argv) {
             case 'p':
                 if (optargInt >= 10) {  // min of 10
                     numOfProgressMarks = optargInt;
-                    cout << "num of progress marks: " << optarg << endl;
                 } else {
                     cout << "Number of progress marks must be a number and at least 10" << endl;
                     exit(EXIT_FAILURE);
@@ -45,7 +44,6 @@ int main(int argc, char **argv) {
             case 'h':
                 if (optargInt > 0 && optargInt <= 10) { // greater than 0 less than or equal to 10
                     numOfHashMarkSpaces = optargInt;
-                    cout << "num of hash marks spaces: " << optarg << endl;
                 } else {
                     cout << "Hash mark interval for progress must be a number, greater than 0,"
                             " and less than or equal to 10";
@@ -54,7 +52,6 @@ int main(int argc, char **argv) {
                 break;
             case 'n':
                 if (optargInt >= 0) {  // greater than or equal to 0
-                    cout << "prefix count: " << optarg << endl;
                     break;
                 } else {
                     cout << "Prefix print count must be a number and greater than 0";
