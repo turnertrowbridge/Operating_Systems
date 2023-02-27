@@ -7,8 +7,8 @@
 
 using namespace std;
 
-#ifndef ASSIGNMENT_1_DICTIONARY_H
-#define ASSIGNMENT_1_DICTIONARY_H
+#ifndef ASSIGNMENT_2_DICTIONARY_H
+#define ASSIGNMENT_2_DICTIONARY_H
 #define NCHILD 30 /* a-z, ', -, _, terminator of word */
 #define APOSTROPHE 39
 #define WORD_TERMINATOR '\0'
@@ -37,4 +37,4 @@ public:
     static int getHashMapValue(char c);
 };
 
-#endif //ASSIGNMENT_1_DICTIONARY_H
+#endif //ASSIGNMENT_2_DICTIONARY_H

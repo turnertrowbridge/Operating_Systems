@@ -6,10 +6,10 @@ CXX=g++
 CXXFLAGS=-std=c++11 -Wall -g3 -c
 
 # object files
-OBJS = dictionary.o countprefix.o 
+OBJS = dictionary.o main.o
 
 # Program name
-PROGRAM = countprefix
+PROGRAM = trieApp
 
 # Rules format:
 # target : dependency1 dependency2 ... dependencyN
@@ -23,9 +23,9 @@ $(PROGRAM) : $(OBJS)
 
 dictionary.o : dictionary.h dictionary.cpp
 	$(CXX) $(CXXFLAGS) dictionary.cpp
-	
-countprefix.o : dictionary.h countprefix.cpp
-	$(CXX) $(CXXFLAGS) countprefix.cpp
+
+main.o : dictionary.h main.cpp
+	$(CXX) $(CXXFLAGS) main.cpp
 	
 clean :
 	rm -f *.o $(PROGRAM)
