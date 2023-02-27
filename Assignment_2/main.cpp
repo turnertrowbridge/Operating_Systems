@@ -19,6 +19,19 @@
 
 using namespace std;
 
+int printProgressBar(double readChars, double totalChars, int *numMarksPrinted, int numReqMarks, int hashInterval){
+    // calculate progress
+    double percentage = readChars / totalChars;
+
+    int numMarks = percentage * numReqMarks;
+    int marksNeeded = numMarks - *numMarksPrinted;
+    for (int i = 0; i < marksNeeded; i++, (*numMarksPrinted)++){
+        if ((*numMarksPrinted + 1) % hashInterval == 0){
+            cout << "#";
+        }else cout << "-";
+    }
+}
+
 int main(int argc, char **argv) {
     SHARED_DATA sharedData;  // shared data data structure
 
@@ -109,21 +122,17 @@ int main(int argc, char **argv) {
 //            }
         int numMarksPrinted = 0;
         while (numMarksPrinted != sharedData.numOfProgressMarks) {
-            // calculate progress
-            double percentage = (double) sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX]
-                                   / (double) sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX];
-
-            int numMarks = percentage * sharedData.numOfProgressMarks;
-            int marksNeeded = numMarks - numMarksPrinted;
-            for (int i = 0; i < marksNeeded; i++, numMarksPrinted++){
-                if ((numMarksPrinted + 1) % sharedData.hashmarkInterval == 0){
-                    cout << "#";
-                }else cout << "-";
-            }
+            printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
+                             (double)sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
+                             &numMarksPrinted, sharedData.numOfProgressMarks,
+                             sharedData.hashmarkInterval);
         }
-        cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
-             << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
+        sharedData.taskCompleted[SHARED_VOCAB_INDEX] = true;
 
+        if (sharedData.taskCompleted[SHARED_VOCAB_INDEX]) {
+            cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
+                 << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
+        }
 
 
 
@@ -131,6 +140,5 @@ int main(int argc, char **argv) {
         cout << "Invalid amount of arguments" << endl;
     }
 
-    cout << "Success" << endl;
     exit(EXIT_SUCCESS);
 };
