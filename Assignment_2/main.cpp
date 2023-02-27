@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 
     int opt;
     optind = OPT_ARG_START_IDX; // get optional arguments starting at fourth index
-    sharedData.numOfProgressMarks = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -p, default value of 1
+    sharedData.numOfProgressMarks = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -p, default value of 50
     sharedData.hashmarkInterval = DEFAULT_HASHMARKINTERVAL;  // set by -h, default value of 10
     sharedData.numOfProcessedPrefixes = DEFAULT_NUMOF_MARKS;  // set by -n, default value of 50
 
@@ -78,7 +78,10 @@ int main(int argc, char **argv) {
         sharedData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
 
-
+        struct stat fileStats;
+        // get num of chars (bytes)
+        stat(sharedData.filePath[SHARED_VOCAB_INDEX], &fileStats);
+        sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX] = fileStats.st_size;
 
         pthread_t populateTreeThread;
         pthread_t readPrefixThread;
@@ -90,20 +93,36 @@ int main(int argc, char **argv) {
 
         sharedData.donePopulatingTree = true;
 
-            if(pthread_join(populateTreeThread, NULL)){
-                cout << "populateTreeThread join error" << endl;
-                exit(EXIT_FAILURE);
-            } else {
-                if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
-                    cout << "readPrefixThread error" << endl;
-                    exit(EXIT_FAILURE);
-                }
+//            if(pthread_join(populateTreeThread, NULL)){
+//                cout << "populateTreeThread join error" << endl;
+//                exit(EXIT_FAILURE);
+//            } else {
+//                if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
+//                    cout << "readPrefixThread error" << endl;
+//                    exit(EXIT_FAILURE);
+//                }
+//
+//                if(pthread_join(readPrefixThread, NULL)){
+//                    cout << "readPrefixThread join error" << endl;
+//                    exit(EXIT_FAILURE);
+//                }
+//            }
+        int numMarksPrinted = 0;
+        while (numMarksPrinted != sharedData.numOfProgressMarks) {
+            // calculate progress
+            double percentage = (double) sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX]
+                                   / (double) sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX];
 
-                if(pthread_join(readPrefixThread, NULL)){
-                    cout << "readPrefixThread join error" << endl;
-                    exit(EXIT_FAILURE);
-                }
+            int numMarks = percentage * sharedData.numOfProgressMarks;
+            int marksNeeded = numMarks - numMarksPrinted;
+            for (int i = 0; i < marksNeeded; i++, numMarksPrinted++){
+                if ((numMarksPrinted + 1) % sharedData.hashmarkInterval == 0){
+                    cout << "#";
+                }else cout << "-";
             }
+        }
+        cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
+             << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
 
 
 
