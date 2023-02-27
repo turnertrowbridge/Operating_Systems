@@ -13,7 +13,6 @@
 
 
 void *populateTree(void *threadarg);
-//void populateTree(SHARED_DATA sharedData);
 
 
 #endif //ASSIGNMENT_2_POPULATETREE_H
