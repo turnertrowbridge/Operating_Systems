@@ -19,7 +19,7 @@
 
 using namespace std;
 
-int printProgressBar(double readChars, double totalChars, int *numMarksPrinted, int numReqMarks, int hashInterval){
+void printProgressBar(double readChars, double totalChars, int *numMarksPrinted, int numReqMarks, int hashInterval){
     // calculate progress
     double percentage = readChars / totalChars;
 
@@ -28,7 +28,11 @@ int printProgressBar(double readChars, double totalChars, int *numMarksPrinted, 
     for (int i = 0; i < marksNeeded; i++, (*numMarksPrinted)++){
         if ((*numMarksPrinted + 1) % hashInterval == 0){
             cout << "#";
-        }else cout << "-";
+            fflush(stdout);
+        }else {
+            cout << "-";
+            fflush(stdout);
+        }
     }
 }
 
@@ -106,25 +110,11 @@ int main(int argc, char **argv) {
 
         sharedData.donePopulatingTree = true;
 
-//            if(pthread_join(populateTreeThread, NULL)){
-//                cout << "populateTreeThread join error" << endl;
-//                exit(EXIT_FAILURE);
-//            } else {
-//                if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
-//                    cout << "readPrefixThread error" << endl;
-//                    exit(EXIT_FAILURE);
-//                }
-//
-//                if(pthread_join(readPrefixThread, NULL)){
-//                    cout << "readPrefixThread join error" << endl;
-//                    exit(EXIT_FAILURE);
-//                }
-//            }
-        int numMarksPrinted = 0;
-        while (numMarksPrinted != sharedData.numOfProgressMarks) {
+        int numMarksPrinted1 = 0;
+        while (numMarksPrinted1 != sharedData.numOfProgressMarks) {
             printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
                              (double)sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
-                             &numMarksPrinted, sharedData.numOfProgressMarks,
+                             &numMarksPrinted1, sharedData.numOfProgressMarks,
                              sharedData.hashmarkInterval);
         }
         sharedData.taskCompleted[SHARED_VOCAB_INDEX] = true;
@@ -132,6 +122,22 @@ int main(int argc, char **argv) {
         if (sharedData.taskCompleted[SHARED_VOCAB_INDEX]) {
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
                  << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
+
+            if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
+                    cout << "readPrefixThread error" << endl;
+                    exit(EXIT_FAILURE);
+            }
+
+            int numMarksPrinted2 = 0;
+            while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
+                printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_TEST_INDEX],
+                                 (double)sharedData.totalNumOfCharsInFile[SHARED_TEST_INDEX],
+                                 &numMarksPrinted2, sharedData.numOfProgressMarks,
+                                 sharedData.hashmarkInterval);
+            }
+            cout << "\nThere are " << sharedData.wordCountInFile[SHARED_TEST_INDEX]
+                 << " words in " << sharedData.filePath[SHARED_TEST_INDEX] <<  "." << endl;
+
         }
 
 

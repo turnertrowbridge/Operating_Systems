@@ -42,8 +42,9 @@ void* readPrefixToQueue(void *threadarg) {
 
 //    cout << "There are " << sharedData->wordCountInFile[SHARED_TEST_INDEX]
 //         << " words in " << sharedData->filePath[SHARED_TEST_INDEX] << endl;
-//
+
 //    cout << "Read " << sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX]
 //         << " chars out of " << sharedData->totalNumOfCharsInFile[SHARED_TEST_INDEX] << endl;
+    sharedData->taskCompleted[SHARED_TEST_INDEX];
     pthread_exit(0);
 };

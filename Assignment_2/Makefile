@@ -6,7 +6,7 @@ CC=g++
 CCFLAGS=-std=c++11 -Wall -g3 -c
 
 # object files
-OBJS = dictionarytree.o populatetree.o  readprefix.o main.o
+OBJS = dictionarytree.o populatetree.o readprefix.o main.o
 
 # countprefix.o
 

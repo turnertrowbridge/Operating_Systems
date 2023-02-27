@@ -39,6 +39,5 @@ public:
     static int getHashMapValue(char c);
 };
 
-using namespace std;
 
 #endif //ASSIGNMENT_2_DICTIONARYTREE_H
