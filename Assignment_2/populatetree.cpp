@@ -25,10 +25,10 @@ void* populateTree(void *threadarg) {
         // reads file line by line and adds to tree word by word
         while (getline(addstream, line)) {
             char *line_c = const_cast<char *>(line.c_str());
-            char *word = strtok(line_c, DELIMITERS);
+            char *word = strtok(line_c, sharedData->delimiters);
             while (word != nullptr) {
                 sharedData->dictRootNode->add(word);
-                word = strtok(nullptr, DELIMITERS);
+                word = strtok(nullptr, sharedData->delimiters);
             }
         }
     }

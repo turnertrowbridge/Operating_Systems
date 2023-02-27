@@ -9,8 +9,6 @@
 #ifndef ASSIGNMENT_2_POPULATETREE_H
 #define ASSIGNMENT_2_POPULATETREE_H
 
-#define DELIMITERS "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~"
-
 
 void *populateTree(void *threadarg);
 
