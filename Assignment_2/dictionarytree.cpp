@@ -2,7 +2,7 @@
 // Created by Turner Trowbridge on 1/21/23.
 // Updated 2/26/23
 //
-#include "dictionary.h"
+#include "dictionarytree.h"
 
 
 // convert char to its corresponding int

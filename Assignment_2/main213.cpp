@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <queue>
 
-#include "dictionarytree.h"
+#include "dictionary.h"
 
 using namespace std;
 
