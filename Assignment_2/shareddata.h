@@ -5,6 +5,9 @@
 #ifndef ASSIGNMENT_2_SHAREDATA_H
 #define ASSIGNMENT_2_SHAREDATA_H
 
+#include "dictionarytree.h"
+#include <queue>
+
 /**
 * Shared constants and data structures among threads
 **/
@@ -53,9 +56,9 @@ typedef struct {
     int minNumOfWordsWithAPrefixForPrinting;
 
     /**
-    * filePath[0] - file path for the dictionary vocabulary file
+    * filePath[SHARED_VOCAB_INDEX] - file path for the dictionary vocabulary file
     * providing words to populate the dictionary tree
-    * filePath[1] - file path for the test source file providing prefixes
+    * filePath[SHARED_TEXT_INDEX] - file path for the test source file providing prefixes
     */
     const char *filePath[NUMOFFILES];
 
@@ -126,7 +129,7 @@ typedef struct {
     /**
     * buffer prefixes read from test file
     */
-    queue <string>prefixQueue;
+    queue <string> prefixQueue;
     /**
     * pthread mutex for accessing the prefixQueue
     */

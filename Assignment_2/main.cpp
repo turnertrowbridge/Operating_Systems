@@ -14,18 +14,19 @@
 
 #include "dictionarytree.h"
 #include "shareddata.h"
+#include "populatetree.h"
 
 using namespace std;
 
 
 int main(int argc, char **argv) {
-    SHARED_DATA shareData;  // shared data data structure
+    SHARED_DATA sharedData;  // shared data data structure
 
     int opt;
     optind = OPT_ARG_START_IDX; // get optional arguments starting at fourth index
-    shareData.numOfProgressMarks = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -p, default value of 1
-    shareData.hashmarkInterval = DEFAULT_HASHMARKINTERVAL;  // set by -h, default value of 10
-    shareData.numOfProcessedPrefixes = DEFAULT_NUMOF_MARKS;  // set by -n, default value of 50
+    sharedData.numOfProgressMarks = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -p, default value of 1
+    sharedData.hashmarkInterval = DEFAULT_HASHMARKINTERVAL;  // set by -h, default value of 10
+    sharedData.numOfProcessedPrefixes = DEFAULT_NUMOF_MARKS;  // set by -n, default value of 50
 
     // get optional arguments
     while((opt = getopt(argc, argv, "p:h:n:")) != -1){\
@@ -41,7 +42,7 @@ int main(int argc, char **argv) {
         switch (opt){
             case 'p':
                 if (optargInt >= MIN_NUMOF_MARKS) {  // min of 10
-                    shareData.numOfProgressMarks = optargInt;
+                    sharedData.numOfProgressMarks = optargInt;
                 } else {
                     cout << "Number of progress marks must be a number and at least 10" << endl;
                     exit(EXIT_FAILURE);
@@ -49,7 +50,7 @@ int main(int argc, char **argv) {
                 break;
             case 'h':
                 if (optargInt > MIN_HASHMARKINTERVAL && optargInt <= MAX_HASHMARKINTERVAL) { // greater than 0 less than or equal to 10
-                    shareData.hashmarkInterval = optargInt;
+                    sharedData.hashmarkInterval = optargInt;
                 } else {
                     cout << "Hash mark interval for progress must be a number, greater than 0,"
                             " and less than or equal to 10";
@@ -58,7 +59,7 @@ int main(int argc, char **argv) {
                 break;
             case 'n':
                 if (optargInt >= DEFAULT_MINNUM_OFWORDS_WITHAPREFIX) {  // greater than or equal to 0
-                    shareData.numOfProcessedPrefixes = optargInt;
+                    sharedData.numOfProcessedPrefixes = optargInt;
                     break;
                 } else {
                     cout << "Prefix print count must be a number greater than or equal to 1";
@@ -73,52 +74,37 @@ int main(int argc, char **argv) {
 
     // get manual arguments
     if (argc > NUMOFFILES){
-        shareData.dictRootNode = new (dictNode); // create root node and initialize pointers to nullptr
-        shareData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
-        shareData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
+        sharedData.dictRootNode = new (dictNode); // create root node and initialize pointers to nullptr
+        sharedData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
+        sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
+
+        populatetree populateTree;
+        populateTree.populateTree(sharedData);
+    
 
         string line;    // stores line data
 
-        // reads the second command line argument
-        ifstream addstream(shareData.filePath[SHARED_VOCAB_INDEX]);
-
-        if (addstream.fail()){
-            cout << "Unable to open <<" << shareData.filePath[SHARED_VOCAB_INDEX] << ">>" << endl;
-            exit(EXIT_FAILURE);
-        } else {
-
-            // reads file line by line and adds to tree word by word
-            while (getline(addstream, line)) {
-                char *line_c = const_cast<char *>(line.c_str());
-                char *word = strtok(line_c, shareData.delimiters);
-                {
-                    while (word != nullptr) {
-                        shareData.dictRootNode->add(word);
-                        word = strtok(nullptr, shareData.delimiters);
-                    }
-                }
-            }
-        }
-
         // reads the third command line argument
-        ifstream countstream(shareData.filePath[SHARED_TEST_INDEX]);
+        ifstream countstream(sharedData.filePath[SHARED_TEST_INDEX]);
+
+
 
         if (countstream.fail()){
-            cout << "Unable to open <<" << shareData.filePath[SHARED_TEST_INDEX] << ">>" << endl;
+            cout << "Unable to open <<" << sharedData.filePath[SHARED_TEST_INDEX] << ">>" << endl;
             exit(EXIT_FAILURE);
         } else {
 
             // reads file line by line and counts the # of words in the tree based on prefixes supplied in file
             while (getline(countstream, line)) {
                 char *line_c = const_cast<char *>(line.c_str());
-                char *word = strtok(line_c, shareData.delimiters);
+                char *word = strtok(line_c, sharedData.delimiters);
                 {
                     while (word != nullptr) {
                         int count = 0;
-                        dictNode *end = shareData.dictRootNode->findEndingNodeOfAStr(word);
+                        dictNode *end = sharedData.dictRootNode->findEndingNodeOfAStr(word);
                         end->countWordsStartingFromANode(count);
                         cout << word << " " << count << endl;
-                        word = strtok(nullptr, shareData.delimiters);
+                        word = strtok(nullptr, sharedData.delimiters);
                     }
                 }
             }
