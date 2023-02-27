@@ -62,13 +62,14 @@ typedef struct {
     */
     const char *filePath[NUMOFFILES];
 
-    const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";  // separates words
+    const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";
+// separates words
 
     /** store total number of characters in files
-    totalNumOfCharsInFile[DICTSRCFILEINDEX]
+    totalNumOfCharsInFile[SHARED_VOCAB_INDEX]
     * - number of total chars in the dictionary vocabulary file.
     * use stat, lstat, or fstat system call
-    * totalNumOfCharsInFile[TEST_FILE_INDEX]
+    * totalNumOfCharsInFile[SHARED_TEST_INDEX]
     * - number of total chars in the test file, you may NOT need this count
     * for this assignment
     *

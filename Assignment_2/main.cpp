@@ -18,7 +18,6 @@
 
 using namespace std;
 
-
 int main(int argc, char **argv) {
     SHARED_DATA sharedData;  // shared data data structure
 
@@ -74,20 +73,25 @@ int main(int argc, char **argv) {
 
     // get manual arguments
     if (argc > NUMOFFILES){
-        sharedData.dictRootNode = new (dictNode); // create root node and initialize pointers to nullptr
+        sharedData.dictRootNode = new dictNode; // create root node and initialize pointers to nullptr
         sharedData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
 
-        populatetree populateTree;
-        populateTree.populateTree(sharedData);
-    
+
+        pthread_t populateTreeThread;
+
+        if (pthread_create(&populateTreeThread, NULL, &populateTree, &sharedData)){
+            cout << "populateTreeThread error" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+//        populateTree(sharedData);
+
 
         string line;    // stores line data
 
         // reads the third command line argument
         ifstream countstream(sharedData.filePath[SHARED_TEST_INDEX]);
-
-
 
         if (countstream.fail()){
             cout << "Unable to open <<" << sharedData.filePath[SHARED_TEST_INDEX] << ">>" << endl;

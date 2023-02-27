@@ -18,7 +18,7 @@ $(PROGRAM) : $(OBJS)
 
 main.o : main.cpp
 	$(CC) $(CCFLAGS) main.cpp
-	
+
 dictionarytree.o : dictionarytree.cpp dictionarytree.h
 	$(CC) $(CCFLAGS) dictionarytree.cpp
 
