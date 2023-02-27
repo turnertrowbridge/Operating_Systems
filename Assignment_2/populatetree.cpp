@@ -17,10 +17,9 @@ void* populateTree(void *threadarg) {
         cout << "Unable to open <<" << sharedData->filePath[SHARED_VOCAB_INDEX] << ">>" << endl;
         exit(EXIT_FAILURE);
     } else {
-        // get num of bytes
+        // get num of chars (bytes)
         stat(sharedData->filePath[SHARED_VOCAB_INDEX], &fileStats);
         sharedData->totalNumOfCharsInFile[SHARED_VOCAB_INDEX] = fileStats.st_size;
-        cout << sharedData->totalNumOfCharsInFile[SHARED_VOCAB_INDEX] << endl;
 
 
         // reads file line by line and adds to tree word by word

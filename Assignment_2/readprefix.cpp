@@ -7,6 +7,7 @@
 void* readPrefixToQueue(void *threadarg) {
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA*) threadarg;
+    struct stat fileStats;
     string line;    // stores line data
 
     // reads the third command line argument
@@ -16,6 +17,10 @@ void* readPrefixToQueue(void *threadarg) {
         cout << "Unable to open <<" << sharedData->filePath[SHARED_TEST_INDEX] << ">>" << endl;
         exit(EXIT_FAILURE);
     } else {
+        // get num of chars (bytes)
+        stat(sharedData->filePath[SHARED_TEST_INDEX], &fileStats);
+        sharedData->totalNumOfCharsInFile[SHARED_TEST_INDEX] = fileStats.st_size;
+
 
         // reads file line by line and counts the # of words in the tree based on prefixes supplied in file
         while (getline(countstream, line)) {
