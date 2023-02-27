@@ -160,6 +160,8 @@ typedef struct {
     * start to show the countprefix progress bar
     */
     bool taskCompleted[NUMOFFILES];
+
+    bool donePopulatingTree = false;
 } SHARED_DATA;
 
 #endif //ASSIGNMENT_2_SHAREDATA_H

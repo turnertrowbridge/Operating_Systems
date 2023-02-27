@@ -15,6 +15,7 @@
 #include "dictionarytree.h"
 #include "shareddata.h"
 #include "populatetree.h"
+#include "readprefix.h"
 
 using namespace std;
 
@@ -78,47 +79,40 @@ int main(int argc, char **argv) {
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
 
 
+
         pthread_t populateTreeThread;
+        pthread_t readPrefixThread;
 
         if (pthread_create(&populateTreeThread, NULL, &populateTree, &sharedData)){
             cout << "populateTreeThread error" << endl;
             exit(EXIT_FAILURE);
         }
 
+        sharedData.donePopulatingTree = true;
+
+            if(pthread_join(populateTreeThread, NULL)){
+                cout << "populateTreeThread join error" << endl;
+                exit(EXIT_FAILURE);
+            } else {
+                if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
+                    cout << "readPrefixThread error" << endl;
+                    exit(EXIT_FAILURE);
+                }
+
+                if(pthread_join(readPrefixThread, NULL)){
+                    cout << "readPrefixThread join error" << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+
 //        populateTree(sharedData);
 
 
-        string line;    // stores line data
-
-        // reads the third command line argument
-        ifstream countstream(sharedData.filePath[SHARED_TEST_INDEX]);
-
-        if (countstream.fail()){
-            cout << "Unable to open <<" << sharedData.filePath[SHARED_TEST_INDEX] << ">>" << endl;
-            exit(EXIT_FAILURE);
-        } else {
-
-            // reads file line by line and counts the # of words in the tree based on prefixes supplied in file
-            while (getline(countstream, line)) {
-                char *line_c = const_cast<char *>(line.c_str());
-                char *word = strtok(line_c, sharedData.delimiters);
-                {
-                    while (word != nullptr) {
-                        int count = 0;
-                        dictNode *end = sharedData.dictRootNode->findEndingNodeOfAStr(word);
-                        end->countWordsStartingFromANode(count);
-                        cout << word << " " << count << endl;
-                        word = strtok(nullptr, sharedData.delimiters);
-                    }
-                }
-            }
-        }
 
     } else{
         cout << "Invalid amount of arguments" << endl;
     }
 
-
-
+    cout << "Success" << endl;
     exit(EXIT_SUCCESS);
 };

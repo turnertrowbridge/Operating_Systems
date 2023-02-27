@@ -62,5 +62,6 @@ void* populateTree(void *threadarg) {
         }
     }
 
+    sharedData->donePopulatingTree = true;
     pthread_exit(0);
 }

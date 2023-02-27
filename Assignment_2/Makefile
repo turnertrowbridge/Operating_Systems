@@ -6,8 +6,9 @@ CC=g++
 CCFLAGS=-std=c++11 -Wall -g3 -c
 
 # object files
-OBJS = dictionarytree.o  main.o populatetree.o
-# readprefix.o countprefix.o
+OBJS = dictionarytree.o populatetree.o  readprefix.o main.o
+
+# countprefix.o
 
 # Program name
 PROGRAM = countprefix
@@ -25,9 +26,9 @@ dictionarytree.o : dictionarytree.cpp dictionarytree.h
 populatetree.o : populatetree.cpp populatetree.h
 	$(CC) $(CCFLAGS) populatetree.cpp
 
-#readprefix.o: readprefix.cpp readprefix.h
-#	$(CC) $(CCFLAGS) readprefix.cpp
-#
+readprefix.o: readprefix.cpp readprefix.h
+	$(CC) $(CCFLAGS) readprefix.cpp
+
 #countprefix.o: countprefix.cpp countprefix.h
 #	$(CC) $(CCFLAGS) countprefix.cpp
 
