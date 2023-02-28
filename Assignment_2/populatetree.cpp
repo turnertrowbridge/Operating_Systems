@@ -27,9 +27,7 @@ void* populateTree(void *threadarg) {
             char *line_c = const_cast<char *>(line.c_str());
             char *word = strtok(line_c, sharedData->delimiters);
             while (word != nullptr) {
-                if (strlen(word) >= sharedData->minNumOfWordsWithAPrefixForPrinting) {
                 sharedData->dictRootNode->add(word);
-                }
                 word = strtok(nullptr, sharedData->delimiters);
                 sharedData->wordCountInFile[SHARED_VOCAB_INDEX] += 1;
             }

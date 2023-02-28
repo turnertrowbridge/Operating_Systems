@@ -5,6 +5,7 @@
 #include "readprefix.h"
 
 void* readPrefixToQueue(void *threadarg) {
+//    auto start = std::chrono::steady_clock::now();
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA*) threadarg;
     struct stat fileStats;
@@ -26,19 +27,22 @@ void* readPrefixToQueue(void *threadarg) {
             char *line_c = const_cast<char *>(line.c_str());
             char *word = strtok(line_c, sharedData->delimiters);
             {
-                pthread_mutex_lock(&sharedData->queue_mutex);  // lock the sharedData structure
                 while (word != nullptr) {
-                    if (strlen(word) >= sharedData->minNumOfWordsWithAPrefixForPrinting) {
+                        pthread_mutex_lock(&sharedData->queue_mutex);  // lock the sharedData structure
                         sharedData->prefixQueue.push(word);
-                    }
+                        pthread_mutex_unlock(&sharedData->queue_mutex);  // unlock the sharedData structure
                         word = strtok(nullptr, sharedData->delimiters);
                         sharedData->wordCountInFile[SHARED_TEST_INDEX] += 1;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;
-                pthread_mutex_unlock(&sharedData->queue_mutex);  // unlock the sharedData structure
             }
         }
     }
+
+//    auto end = std::chrono::steady_clock::now();
+//    auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+//    std::cout << "\nThread runtime read: " << runtime_ns << " ns" << std::endl;
+
     sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
 
     pthread_exit(0);

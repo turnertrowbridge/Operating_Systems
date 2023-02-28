@@ -118,11 +118,11 @@ int main(int argc, char **argv) {
 
 
         // print progress bar for reading and counting prefix
-        int numMarksPrinted = 0;    // counts num of progressMarks printed so far
-        while (numMarksPrinted != sharedData.numOfProgressMarks) {
+        int numMarksPrinted1 = 0;    // counts num of progressMarks printed so far
+        while (numMarksPrinted1 != sharedData.numOfProgressMarks) {
             printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
                              (double)sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
-                             &numMarksPrinted, sharedData.numOfProgressMarks,
+                             &numMarksPrinted1, sharedData.numOfProgressMarks,
                              sharedData.hashmarkInterval);
         }
 
@@ -147,11 +147,11 @@ int main(int argc, char **argv) {
             }
 
             // print progress bar for reading and counting prefix
-            numMarksPrinted = 0; // counts num of progressMarks printed so far
-            while (numMarksPrinted != sharedData.numOfProgressMarks) {
+            int numMarksPrinted2 = 0; // counts num of progressMarks printed so far
+            while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
                 printProgressBar((double) sharedData.numOfCharsReadFromFile[SHARED_TEST_INDEX],
                                  (double) sharedData.totalNumOfCharsInFile[SHARED_TEST_INDEX],
-                                 &numMarksPrinted, sharedData.numOfProgressMarks,
+                                 &numMarksPrinted2, sharedData.numOfProgressMarks,
                                  sharedData.hashmarkInterval);
             }
 
