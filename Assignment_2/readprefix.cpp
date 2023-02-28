@@ -22,32 +22,26 @@ void* readPrefixToQueue(void *threadarg) {
         stat(sharedData->filePath[SHARED_TEST_INDEX], &fileStats);
         sharedData->totalNumOfCharsInFile[SHARED_TEST_INDEX] = fileStats.st_size;
 
-
-        // reads file line by line and counts the # of words in the tree based on prefixes supplied in file
+        // reads file line by line and set words
         while (getline(countstream, line)) {
             char *line_c = const_cast<char *>(line.c_str());
-            char *word = strtok(line_c, DELIMITERS);
+            char *word = strtok(line_c, sharedData->delimiters);
             {
-                pthread_mutex_lock(&sharedData->queue_mutex);
                 while (word != nullptr) {
-//                    cout << "added: " << word << endl;
+
+                    // lock sharedData, push word to queue, and re-lock sharedData
+                    pthread_mutex_lock(&sharedData->queue_mutex);
                     sharedData->prefixQueue.push(word);
-//                    int count = 0;
-//                    dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
-//                    end->countWordsStartingFromANode(count);
-//                    cout << word << " " << count << endl;
-                    word = strtok(nullptr, DELIMITERS);
-//                    if (strcmp(word, "intelligence--Elizabeth")){
-//                        cout << "point before error" << endl;
-//                    }
+                    pthread_mutex_unlock(&sharedData->queue_mutex);
+
+                    word = strtok(nullptr, sharedData->delimiters);
+
                     sharedData->wordCountInFile[SHARED_TEST_INDEX] += 1;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;
-                pthread_mutex_unlock(&sharedData->queue_mutex);
             }
         }
     }
-
     sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
     pthread_exit(0);
 };

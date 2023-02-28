@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     sharedData.minNumOfWordsWithAPrefixForPrinting = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -n, default value of 1
 
     // get optional arguments
-    while((opt = getopt(argc, argv, "p:h:n:")) != -1){\
+    while((opt = getopt(argc, argv, "p:h:n:")) != -1){
 
         // make sure there is an argument after last option
         if (optarg == NULL){
@@ -54,8 +54,9 @@ int main(int argc, char **argv) {
             exit(EXIT_FAILURE);
         }
 
-        int optargInt = atoi(optarg);
+        int optargInt = atoi(optarg); // convert string to integer
 
+        // set optional arguments values if specified
         switch (opt){
             case 'p':
                 if (optargInt >= MIN_NUMOF_MARKS) {  // min of 10
@@ -76,7 +77,7 @@ int main(int argc, char **argv) {
                 break;
             case 'n':
                 if (optargInt >= DEFAULT_MINNUM_OFWORDS_WITHAPREFIX) {  // greater than or equal to 1
-                    sharedData.numOfProcessedPrefixes = optargInt;
+                    sharedData.minNumOfWordsWithAPrefixForPrinting = optargInt;
                     break;
                 } else {
                     cout << "Prefix print count must be a number greater than or equal to 1";
@@ -92,16 +93,17 @@ int main(int argc, char **argv) {
     // get manual arguments
     if (argc > NUMOFFILES){
         sharedData.dictRootNode = new dictNode; // create root node and initialize pointers to nullptr
+
+        // set file path names
         sharedData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
+
+        // set tasksCompleted to false
         sharedData.taskCompleted[SHARED_TEST_INDEX] = false;
         sharedData.taskCompleted[SHARED_VOCAB_INDEX] = false;
 
-        struct stat fileStats;
-        // get num of chars (bytes)
-        stat(sharedData.filePath[SHARED_VOCAB_INDEX], &fileStats);
-        sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX] = fileStats.st_size;
 
+        // initialize threads and mutex
         pthread_t populateTreeThread;
         pthread_t readPrefixThread;
         pthread_t countPrefixThread;
@@ -113,8 +115,8 @@ int main(int argc, char **argv) {
             exit(EXIT_FAILURE);
         }
 
-
-        int numMarksPrinted1 = 0;
+        // print progress bar for reading and counting prefix
+        int numMarksPrinted1 = 0;    // counts num of progressMarks printed so far
         while (numMarksPrinted1 != sharedData.numOfProgressMarks) {
             printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
                              (double)sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
@@ -123,22 +125,27 @@ int main(int argc, char **argv) {
         }
         sharedData.taskCompleted[SHARED_VOCAB_INDEX] = true;
 
+        // join populateTreeThread back to main, then create other threads
         if (pthread_join(populateTreeThread, NULL)) {
-
+            cout << "populateTreeThread join error" << endl;
         }else{
+            // print out the amount of words in first file
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
                  << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
 
+            // create readPrefixThread
             if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
                     cout << "readPrefixThread error" << endl;
                     exit(EXIT_FAILURE);
             }
 
+            // create countPrefixThread
             if (pthread_create(&countPrefixThread, NULL, &dequeuePrefixAndCount, &sharedData)){
                 cout << "readPrefixThread error" << endl;
                 exit(EXIT_FAILURE);
             }
 
+            // print progress bar for reading and counting prefix
             int numMarksPrinted2 = 0;
             while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
                 printProgressBar((double) sharedData.numOfCharsReadFromFile[SHARED_TEST_INDEX],
@@ -147,23 +154,22 @@ int main(int argc, char **argv) {
                                  sharedData.hashmarkInterval);
             }
 
-
+            // join readPrefixThread back to main
             if(pthread_join(readPrefixThread, NULL)){
                 cout << "readPrefixThread join error" << endl;
             }
 
+            // join countPrefixThread back to main
             if(pthread_join(countPrefixThread, NULL)){
                 cout << "countPrefixThread join error" << endl;
             }
 
+            // print out the amount of words in second file
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_TEST_INDEX]
                  << " words in " << sharedData.filePath[SHARED_TEST_INDEX] <<  "." << endl;
         }
-
-
     } else{
         cout << "Invalid amount of arguments" << endl;
     }
-
     exit(EXIT_SUCCESS);
 };

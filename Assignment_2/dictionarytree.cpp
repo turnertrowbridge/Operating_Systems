@@ -42,14 +42,7 @@ bool dictNode::add(const char *wordBeingInserted) {
 
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     // convert char in word to predefined int
-
-//    cout << "word: " << strBeingSearched << endl;
     int charIndex = hashTable::getHashMapValue(*strBeingSearched);
-
-    // return node if end of word
-//    if (strlen(strBeingSearched) == 0){
-//        return this;
-//    }
     if (*strBeingSearched == WORD_TERMINATOR){
         return this;
     }

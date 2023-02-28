@@ -10,6 +10,8 @@
 #ifndef ASSIGNMENT_2_COUNTPREFIX_H
 #define ASSIGNMENT_2_COUNTPREFIX_H
 
+#define OUTPUTFILE_NAME "countprefix_output.txt"
+
 
 void* dequeuePrefixAndCount(void *threadarg);
 
