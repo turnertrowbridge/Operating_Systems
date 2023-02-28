@@ -7,7 +7,6 @@
  * Date: 01/25/2023
  */
 #include <fstream>
-#include <cstring>
 #include <unistd.h>
 #include <pthread.h>
 #include <queue>
@@ -16,6 +15,7 @@
 #include "shareddata.h"
 #include "populatetree.h"
 #include "readprefix.h"
+#include "countprefix.h"
 
 using namespace std;
 
@@ -41,9 +41,9 @@ int main(int argc, char **argv) {
 
     int opt;
     optind = OPT_ARG_START_IDX; // get optional arguments starting at fourth index
-    sharedData.numOfProgressMarks = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -p, default value of 50
+    sharedData.numOfProgressMarks = DEFAULT_NUMOF_MARKS;  // set by -p, default value of 50
     sharedData.hashmarkInterval = DEFAULT_HASHMARKINTERVAL;  // set by -h, default value of 10
-    sharedData.numOfProcessedPrefixes = DEFAULT_NUMOF_MARKS;  // set by -n, default value of 50
+    sharedData.minNumOfWordsWithAPrefixForPrinting = DEFAULT_MINNUM_OFWORDS_WITHAPREFIX;  // set by -n, default value of 1
 
     // get optional arguments
     while((opt = getopt(argc, argv, "p:h:n:")) != -1){\
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 'n':
-                if (optargInt >= DEFAULT_MINNUM_OFWORDS_WITHAPREFIX) {  // greater than or equal to 0
+                if (optargInt >= DEFAULT_MINNUM_OFWORDS_WITHAPREFIX) {  // greater than or equal to 1
                     sharedData.numOfProcessedPrefixes = optargInt;
                     break;
                 } else {
@@ -94,6 +94,8 @@ int main(int argc, char **argv) {
         sharedData.dictRootNode = new dictNode; // create root node and initialize pointers to nullptr
         sharedData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
+        sharedData.taskCompleted[SHARED_TEST_INDEX] = false;
+        sharedData.taskCompleted[SHARED_VOCAB_INDEX] = false;
 
         struct stat fileStats;
         // get num of chars (bytes)
@@ -102,13 +104,15 @@ int main(int argc, char **argv) {
 
         pthread_t populateTreeThread;
         pthread_t readPrefixThread;
+        pthread_t countPrefixThread;
+        pthread_mutex_init(&sharedData.queue_mutex, NULL);
+
 
         if (pthread_create(&populateTreeThread, NULL, &populateTree, &sharedData)){
             cout << "populateTreeThread error" << endl;
             exit(EXIT_FAILURE);
         }
 
-        sharedData.donePopulatingTree = true;
 
         int numMarksPrinted1 = 0;
         while (numMarksPrinted1 != sharedData.numOfProgressMarks) {
@@ -119,13 +123,20 @@ int main(int argc, char **argv) {
         }
         sharedData.taskCompleted[SHARED_VOCAB_INDEX] = true;
 
-        if (sharedData.taskCompleted[SHARED_VOCAB_INDEX]) {
+        if (pthread_join(populateTreeThread, NULL)) {
+
+        }else{
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
                  << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
 
             if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
                     cout << "readPrefixThread error" << endl;
                     exit(EXIT_FAILURE);
+            }
+
+            if (pthread_create(&countPrefixThread, NULL, &dequeuePrefixAndCount, &sharedData)){
+                cout << "readPrefixThread error" << endl;
+                exit(EXIT_FAILURE);
             }
 
             int numMarksPrinted2 = 0;
@@ -135,11 +146,19 @@ int main(int argc, char **argv) {
                                  &numMarksPrinted2, sharedData.numOfProgressMarks,
                                  sharedData.hashmarkInterval);
             }
+
+            if(pthread_join(readPrefixThread, NULL)){
+                cout << "readPrefixThread join error" << endl;
+            }
+
+            if(pthread_join(countPrefixThread, NULL)){
+                cout << "countPrefixThread join error" << endl;
+            }
+
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_TEST_INDEX]
                  << " words in " << sharedData.filePath[SHARED_TEST_INDEX] <<  "." << endl;
 
         }
-
 
 
     } else{

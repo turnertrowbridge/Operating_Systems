@@ -36,13 +36,5 @@ void* populateTree(void *threadarg) {
         }
     }
 
-//    cout << "There are " << sharedData->wordCountInFile[SHARED_VOCAB_INDEX]
-//          << " words in " << sharedData->filePath[SHARED_VOCAB_INDEX] << endl;
-//
-//    cout << "Read " << sharedData->numOfCharsReadFromFile[SHARED_VOCAB_INDEX]
-//           << " chars out of " << sharedData->totalNumOfCharsInFile[SHARED_VOCAB_INDEX] << endl;
-
-
-
     pthread_exit(0);
 }

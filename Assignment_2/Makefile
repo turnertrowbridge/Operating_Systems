@@ -6,9 +6,8 @@ CC=g++
 CCFLAGS=-std=c++11 -Wall -g3 -c
 
 # object files
-OBJS = dictionarytree.o populatetree.o readprefix.o main.o
+OBJS = dictionarytree.o populatetree.o readprefix.o countprefix.o main.o
 
-# countprefix.o
 
 # Program name
 PROGRAM = countprefix
@@ -29,8 +28,8 @@ populatetree.o : populatetree.cpp populatetree.h
 readprefix.o: readprefix.cpp readprefix.h
 	$(CC) $(CCFLAGS) readprefix.cpp
 
-#countprefix.o: countprefix.cpp countprefix.h
-#	$(CC) $(CCFLAGS) countprefix.cpp
+countprefix.o: countprefix.cpp countprefix.h
+	$(CC) $(CCFLAGS) countprefix.cpp
 
 # Once things work, people frequently delete their object files.
 # If you use "make clean", this will do it for you.

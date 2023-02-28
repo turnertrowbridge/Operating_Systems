@@ -7,7 +7,12 @@
 
 // convert char to its corresponding int
 int hashTable::getHashMapValue(char c) {
-    return wordHashTable.at((c));
+//    if (wordHashTable.find(c) != wordHashTable.end()){
+        return wordHashTable.at((c));
+//    }
+//
+//    cout << "\nerror at " << c << endl;
+//    exit(EXIT_FAILURE);
 };
 
 
@@ -17,7 +22,7 @@ bool dictNode::add(const char *wordBeingInserted) {
     int charIndex = hashTable::getHashMapValue(*wordBeingInserted);
 
     // if end of string character found, add word terminator and return
-    if(charIndex == hashTable::getHashMapValue('\0')){
+    if(charIndex == hashTable::getHashMapValue(WORD_TERMINATOR)){
         if (this->next[charIndex]){
             return false;
         } else {
@@ -37,10 +42,15 @@ bool dictNode::add(const char *wordBeingInserted) {
 
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     // convert char in word to predefined int
+
+//    cout << "word: " << strBeingSearched << endl;
     int charIndex = hashTable::getHashMapValue(*strBeingSearched);
 
     // return node if end of word
-    if (strlen(strBeingSearched) == 0){
+//    if (strlen(strBeingSearched) == 0){
+//        return this;
+//    }
+    if (*strBeingSearched == WORD_TERMINATOR){
         return this;
     }
 
@@ -61,7 +71,7 @@ void dictNode::countWordsStartingFromANode(int &count) {
     }
 
     // increase count if word terminator is found
-    if (this->next[hashTable::getHashMapValue('\0')]){
+    if (this->next[hashTable::getHashMapValue(WORD_TERMINATOR)]){
         count++;
     }
 

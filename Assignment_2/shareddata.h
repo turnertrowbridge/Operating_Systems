@@ -161,7 +161,6 @@ typedef struct {
     */
     bool taskCompleted[NUMOFFILES];
 
-    bool donePopulatingTree = false;
 } SHARED_DATA;
 
 #endif //ASSIGNMENT_2_SHAREDATA_H

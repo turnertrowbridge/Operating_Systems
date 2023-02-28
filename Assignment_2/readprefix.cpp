@@ -27,24 +27,23 @@ void* readPrefixToQueue(void *threadarg) {
             char *line_c = const_cast<char *>(line.c_str());
             char *word = strtok(line_c, sharedData->delimiters);
             {
+                pthread_mutex_lock(&sharedData->queue_mutex);
                 while (word != nullptr) {
-                    int count = 0;
-                    dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
-                    end->countWordsStartingFromANode(count);
+//                    cout << "added: " << word << endl;
+                    sharedData->prefixQueue.push(word);
+//                    int count = 0;
+//                    dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
+//                    end->countWordsStartingFromANode(count);
 //                    cout << word << " " << count << endl;
                     word = strtok(nullptr, sharedData->delimiters);
                     sharedData->wordCountInFile[SHARED_TEST_INDEX] += 1;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;
+                pthread_mutex_unlock(&sharedData->queue_mutex);
             }
         }
     }
 
-//    cout << "There are " << sharedData->wordCountInFile[SHARED_TEST_INDEX]
-//         << " words in " << sharedData->filePath[SHARED_TEST_INDEX] << endl;
-
-//    cout << "Read " << sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX]
-//         << " chars out of " << sharedData->totalNumOfCharsInFile[SHARED_TEST_INDEX] << endl;
-    sharedData->taskCompleted[SHARED_TEST_INDEX];
+    sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
     pthread_exit(0);
 };
