@@ -3,6 +3,7 @@
 //
 
 #include "readprefix.h"
+#include <cstring>
 
 void* readPrefixToQueue(void *threadarg) {
     SHARED_DATA *sharedData;
@@ -25,7 +26,7 @@ void* readPrefixToQueue(void *threadarg) {
         // reads file line by line and counts the # of words in the tree based on prefixes supplied in file
         while (getline(countstream, line)) {
             char *line_c = const_cast<char *>(line.c_str());
-            char *word = strtok(line_c, sharedData->delimiters);
+            char *word = strtok(line_c, DELIMITERS);
             {
                 pthread_mutex_lock(&sharedData->queue_mutex);
                 while (word != nullptr) {
@@ -35,7 +36,10 @@ void* readPrefixToQueue(void *threadarg) {
 //                    dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
 //                    end->countWordsStartingFromANode(count);
 //                    cout << word << " " << count << endl;
-                    word = strtok(nullptr, sharedData->delimiters);
+                    word = strtok(nullptr, DELIMITERS);
+//                    if (strcmp(word, "intelligence--Elizabeth")){
+//                        cout << "point before error" << endl;
+//                    }
                     sharedData->wordCountInFile[SHARED_TEST_INDEX] += 1;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;

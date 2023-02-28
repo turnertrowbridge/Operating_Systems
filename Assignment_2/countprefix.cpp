@@ -13,7 +13,10 @@ void* dequeuePrefixAndCount(void *threadarg) {
         if(sharedData->prefixQueue.size() > 0) {
             pthread_mutex_lock(&sharedData->queue_mutex);
             int count = 0;
-            const char *word = sharedData->prefixQueue.front().c_str();
+            string front = sharedData->prefixQueue.front();
+            char frontChar[sharedData->prefixQueue.front().size()];
+            strcpy(frontChar, sharedData->prefixQueue.front().c_str());
+            const char *word = frontChar;
 //            if (sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] > 14000) {
 //                cout << "popped: " << word << " " << sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] << endl;
 //            }

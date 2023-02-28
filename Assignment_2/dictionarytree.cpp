@@ -7,12 +7,12 @@
 
 // convert char to its corresponding int
 int hashTable::getHashMapValue(char c) {
-//    if (wordHashTable.find(c) != wordHashTable.end()){
+    if (wordHashTable.find(c) != wordHashTable.end()){
         return wordHashTable.at((c));
-//    }
-//
-//    cout << "\nerror at " << c << endl;
-//    exit(EXIT_FAILURE);
+    }
+
+    cout << "\nerror at " << c << endl;
+    exit(EXIT_FAILURE);
 };
 
 

@@ -9,6 +9,7 @@
 
 #ifndef ASSIGNMENT_2_READPREFIX_H
 #define ASSIGNMENT_2_READPREFIX_H
+#define DELIMITERS "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~"
 
 
 void* readPrefixToQueue(void *threadarg);

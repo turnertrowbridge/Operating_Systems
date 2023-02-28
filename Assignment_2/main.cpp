@@ -141,11 +141,12 @@ int main(int argc, char **argv) {
 
             int numMarksPrinted2 = 0;
             while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
-                printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_TEST_INDEX],
-                                 (double)sharedData.totalNumOfCharsInFile[SHARED_TEST_INDEX],
+                printProgressBar((double) sharedData.numOfCharsReadFromFile[SHARED_TEST_INDEX],
+                                 (double) sharedData.totalNumOfCharsInFile[SHARED_TEST_INDEX],
                                  &numMarksPrinted2, sharedData.numOfProgressMarks,
                                  sharedData.hashmarkInterval);
             }
+
 
             if(pthread_join(readPrefixThread, NULL)){
                 cout << "readPrefixThread join error" << endl;
@@ -157,7 +158,6 @@ int main(int argc, char **argv) {
 
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_TEST_INDEX]
                  << " words in " << sharedData.filePath[SHARED_TEST_INDEX] <<  "." << endl;
-
         }
 
 
