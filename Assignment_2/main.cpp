@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
                 break;
             case 'n':
                 if (optargInt >= DEFAULT_MINNUM_OFWORDS_WITHAPREFIX) {  // greater than or equal to 1
-                    sharedData.numOfProcessedPrefixes = optargInt;
+                    sharedData.minNumOfWordsWithAPrefixForPrinting = optargInt;
                     break;
                 } else {
                     cout << "Prefix print count must be a number greater than or equal to 1";

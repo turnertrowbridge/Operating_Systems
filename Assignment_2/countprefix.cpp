@@ -12,19 +12,20 @@ void* dequeuePrefixAndCount(void *threadarg) {
 //    cout << "taskcompleted for readprefix: " << sharedData->taskCompleted[SHARED_TEST_INDEX] << endl;
     while(sharedData->prefixQueue.size() > 0 || !sharedData->taskCompleted[SHARED_TEST_INDEX]) {
         if(sharedData->prefixQueue.size() > 0) {
-            pthread_mutex_lock(&sharedData->queue_mutex);
+            pthread_mutex_lock(&sharedData->queue_mutex); // lock the sharedData structure
             int count = 0;
             string front = sharedData->prefixQueue.front();
             char frontChar[sharedData->prefixQueue.front().size()];
             strcpy(frontChar, sharedData->prefixQueue.front().c_str());
             const char *word = frontChar;
-            sharedData->prefixQueue.pop();
-            dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
-            end->countWordsStartingFromANode(count);
-            if (count >= sharedData->minNumOfWordsWithAPrefixForPrinting){
-                outputFile << word << " " << count << endl;
-            }
-            pthread_mutex_unlock(&sharedData->queue_mutex);
+//            cout << word << " , " << strlen(word) << endl;
+                sharedData->prefixQueue.pop();
+                dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
+                end->countWordsStartingFromANode(count);
+                if (count >= sharedData->minNumOfWordsWithAPrefixForPrinting) {
+                    outputFile << word << " " << count << endl;
+                }
+            pthread_mutex_unlock(&sharedData->queue_mutex); // unlock the sharedData structure
         }
     }
 
