@@ -4,8 +4,10 @@
 
 #include "readprefix.h"
 #include <cstring>
+#include <chrono>
 
 void* readPrefixToQueue(void *threadarg) {
+    auto start = std::chrono::steady_clock::now();
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA*) threadarg;
     struct stat fileStats;
@@ -30,16 +32,8 @@ void* readPrefixToQueue(void *threadarg) {
             {
                 pthread_mutex_lock(&sharedData->queue_mutex);
                 while (word != nullptr) {
-//                    cout << "added: " << word << endl;
                     sharedData->prefixQueue.push(word);
-//                    int count = 0;
-//                    dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
-//                    end->countWordsStartingFromANode(count);
-//                    cout << word << " " << count << endl;
                     word = strtok(nullptr, DELIMITERS);
-//                    if (strcmp(word, "intelligence--Elizabeth")){
-//                        cout << "point before error" << endl;
-//                    }
                     sharedData->wordCountInFile[SHARED_TEST_INDEX] += 1;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;
@@ -47,7 +41,10 @@ void* readPrefixToQueue(void *threadarg) {
             }
         }
     }
-
     sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
+    auto end = std::chrono::steady_clock::now();
+    auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    std::cout << "\nThread runtime read: " << runtime_ns << " ns" << std::endl;
+
     pthread_exit(0);
 };

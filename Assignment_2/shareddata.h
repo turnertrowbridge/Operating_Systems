@@ -2,8 +2,8 @@
 // Created by Turner Trowbridge on 2/26/23.
 //
 
-#ifndef ASSIGNMENT_2_SHAREDATA_H
-#define ASSIGNMENT_2_SHAREDATA_H
+#ifndef ASSIGNMENT_2_SHAREDDATA_H
+#define ASSIGNMENT_2_SHAREDDATA_H
 
 #include "dictionarytree.h"
 #include <queue>
@@ -163,4 +163,4 @@ typedef struct {
 
 } SHARED_DATA;
 
-#endif //ASSIGNMENT_2_SHAREDATA_H
+#endif //ASSIGNMENT_2_SHAREDDATA_H

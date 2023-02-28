@@ -5,11 +5,12 @@
 #include "countprefix.h"
 
 void* dequeuePrefixAndCount(void *threadarg) {
+    auto start = std::chrono::steady_clock::now();
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA *) threadarg;
     ofstream outputFile("countprefix_output.txt");
 //    cout << "taskcompleted for readprefix: " << sharedData->taskCompleted[SHARED_TEST_INDEX] << endl;
-    while(sharedData->prefixQueue.size() > 0 || sharedData->taskCompleted[SHARED_TEST_INDEX] != true) {
+    while(sharedData->prefixQueue.size() > 0 || !sharedData->taskCompleted[SHARED_TEST_INDEX]) {
         if(sharedData->prefixQueue.size() > 0) {
             pthread_mutex_lock(&sharedData->queue_mutex);
             int count = 0;
@@ -17,9 +18,6 @@ void* dequeuePrefixAndCount(void *threadarg) {
             char frontChar[sharedData->prefixQueue.front().size()];
             strcpy(frontChar, sharedData->prefixQueue.front().c_str());
             const char *word = frontChar;
-//            if (sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] > 14000) {
-//                cout << "popped: " << word << " " << sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] << endl;
-//            }
             sharedData->prefixQueue.pop();
             dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
             end->countWordsStartingFromANode(count);
@@ -29,6 +27,10 @@ void* dequeuePrefixAndCount(void *threadarg) {
             pthread_mutex_unlock(&sharedData->queue_mutex);
         }
     }
+
+    auto end = std::chrono::steady_clock::now();
+    auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    std::cout << "\nThread runtime count: " << runtime_ns << " ns" << std::endl;
 
     outputFile.close();
     pthread_exit(0);
