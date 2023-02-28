@@ -3,8 +3,6 @@
 //
 
 #include "readprefix.h"
-#include <cstring>
-#include <chrono>
 
 void* readPrefixToQueue(void *threadarg) {
     auto start = std::chrono::steady_clock::now();
@@ -31,7 +29,6 @@ void* readPrefixToQueue(void *threadarg) {
             {
                 pthread_mutex_lock(&sharedData->queue_mutex);  // lock the sharedData structure
                 while (word != nullptr) {
-//                    cout << sharedData->minNumOfWordsWithAPrefixForPrinting << endl;
                     if (strlen(word) >= sharedData->minNumOfWordsWithAPrefixForPrinting) {
                         sharedData->prefixQueue.push(word);
                     }
