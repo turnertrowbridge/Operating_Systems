@@ -4,6 +4,8 @@
 
 #include <unordered_map>
 #include <iostream>
+#include <cstring>
+
 
 using namespace std;
 

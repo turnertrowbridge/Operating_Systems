@@ -5,7 +5,6 @@
 #include "countprefix.h"
 
 void* dequeuePrefixAndCount(void *threadarg) {
-    auto start = std::chrono::steady_clock::now();
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA *) threadarg;
     ofstream outputFile("countprefix_output.txt");
@@ -28,10 +27,6 @@ void* dequeuePrefixAndCount(void *threadarg) {
             pthread_mutex_unlock(&sharedData->queue_mutex); // unlock the sharedData structure
         }
     }
-
-    auto end = std::chrono::steady_clock::now();
-    auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    std::cout << "\nThread runtime count: " << runtime_ns << " ns" << std::endl;
 
     outputFile.close();
     pthread_exit(0);

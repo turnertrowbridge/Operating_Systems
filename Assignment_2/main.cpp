@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <queue>
+#include <cstring>
 
 #include "dictionarytree.h"
 #include "shareddata.h"

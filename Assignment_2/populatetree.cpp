@@ -6,7 +6,6 @@
 
 
 void* populateTree(void *threadarg) {
-    auto start = std::chrono::steady_clock::now();
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA*) threadarg;
     struct stat fileStats;
@@ -38,10 +37,6 @@ void* populateTree(void *threadarg) {
             sharedData->numOfCharsReadFromFile[SHARED_VOCAB_INDEX] += line.size() + 1;
         }
     }
-
-    auto end = std::chrono::steady_clock::now();
-    auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    std::cout << "\nThread runtime populate: " << runtime_ns << " ns" << std::endl;
 
     pthread_exit(0);
 }
