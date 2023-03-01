@@ -19,6 +19,7 @@
 #define SHARED_VOCAB_INDEX 0
 #define SHARED_TEST_INDEX 1
 
+
 #define OPT_ARG_START_IDX 3
 
 /* default number of progress marks for representing 100% progress */

@@ -19,9 +19,9 @@
 
 using namespace std;
 
-void printProgressBarPopulate(double readChars, double totalChars, int *numMarksPrinted, int numReqMarks, int hashInterval){
+void printProgressBar(long readVals, long totalVals, int *numMarksPrinted, int numReqMarks, int hashInterval){
     // calculate progress
-    double percentage = readChars / totalChars;
+    double percentage = (double) readVals / (double) totalVals;
 
     int numMarks = percentage * numReqMarks;
     int marksNeeded = numMarks - *numMarksPrinted;
@@ -36,20 +36,6 @@ void printProgressBarPopulate(double readChars, double totalChars, int *numMarks
     }
 }
 
-void printProgressBarCount(double processedPrefixes, double totalWordCount, int *numMarksPrinted, int numReqMarks, int hashInterval){
-    // calculate progress
-    double percentage = processedPrefixes / totalWordCount;
-
-    int numMarks = percentage * numReqMarks;
-    int marksNeeded = numMarks - *numMarksPrinted;
-    for (int i = 0; i < marksNeeded; i++, (*numMarksPrinted)++){
-        if ((*numMarksPrinted + 1) % hashInterval == 0){
-            cout.flush() << "#";
-        }else {
-            cout.flush() << "-";
-        }
-    }
-}
 
 int main(int argc, char **argv) {
     SHARED_DATA sharedData;  // shared data data structure
@@ -114,8 +100,12 @@ int main(int argc, char **argv) {
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
 
         // set tasksCompleted to false
-        sharedData.taskCompleted[SHARED_TEST_INDEX] = false;
         sharedData.taskCompleted[SHARED_VOCAB_INDEX] = false;
+        sharedData.taskCompleted[SHARED_TEST_INDEX] = false;
+
+        sharedData.wordCountInFile[SHARED_VOCAB_INDEX] = 0;
+        sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX] = 0;
+
 
 
         // initialize threads and mutex
@@ -130,60 +120,55 @@ int main(int argc, char **argv) {
             exit(EXIT_FAILURE);
         }
 
-        // print progress bar for reading and counting prefix
-        int numMarksPrinted1 = 0;    // counts num of progressMarks printed so far
-        while (numMarksPrinted1 != sharedData.numOfProgressMarks) {
-            printProgressBarPopulate((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
-                             (double)sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
-                             &numMarksPrinted1, sharedData.numOfProgressMarks,
-                             sharedData.hashmarkInterval);
+        // create readPrefixThread
+        if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
+            cout << "readPrefixThread error" << endl;
+            exit(EXIT_FAILURE);
         }
-        sharedData.taskCompleted[SHARED_VOCAB_INDEX] = true;
 
-        // join populateTreeThread back to main, then create other threads
-        if (pthread_join(populateTreeThread, NULL)) {
-            cout << "populateTreeThread join error" << endl;
-        }else{
+        // create countPrefixThread
+        if (pthread_create(&countPrefixThread, NULL, &dequeuePrefixAndCount, &sharedData)){
+            cout << "readPrefixThread error" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+
+        // print progress bar for reading and counting prefix
+        int numMarksPrintedPopulateBar = 0;    // counts num of progressMarks printed so far
+        while (numMarksPrintedPopulateBar != sharedData.numOfProgressMarks) {
+            if(sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX] != 0) {
+                printProgressBar(sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
+                                 sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
+                                 &numMarksPrintedPopulateBar, sharedData.numOfProgressMarks,
+                                 sharedData.hashmarkInterval);
+            }
+        }
+
+
+        if (numMarksPrintedPopulateBar == sharedData.numOfProgressMarks) {
             // print out the amount of words in first file
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_VOCAB_INDEX]
                  << " words in " << sharedData.filePath[SHARED_VOCAB_INDEX] << "." << endl;
+        }
 
-            // create readPrefixThread
-            if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
-                    cout << "readPrefixThread error" << endl;
-                    exit(EXIT_FAILURE);
+
+        // print progress bar for reading and counting prefix
+        int numMarksPrintedCountBar = 0;
+        while (numMarksPrintedCountBar != sharedData.numOfProgressMarks) {
+            if(sharedData.taskCompleted[SHARED_TEST_INDEX]) {
+                printProgressBar(sharedData.numOfProcessedPrefixes,
+                                 sharedData.wordCountInFile[SHARED_TEST_INDEX],
+                                 &numMarksPrintedCountBar, sharedData.numOfProgressMarks,
+                                 sharedData.hashmarkInterval);
             }
+        }
 
-            // create countPrefixThread
-            if (pthread_create(&countPrefixThread, NULL, &dequeuePrefixAndCount, &sharedData)){
-                cout << "readPrefixThread error" << endl;
-                exit(EXIT_FAILURE);
-            }
-
-
-            // join readPrefixThread back to main
-            if(pthread_join(readPrefixThread, NULL)){
-                cout << "readPrefixThread join error" << endl;
-            } else {
-                // print progress bar for reading and counting prefix
-                int numMarksPrinted2 = 0;
-                while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
-                    printProgressBarCount((double) sharedData.numOfProcessedPrefixes,
-                                          (double) sharedData.wordCountInFile[SHARED_TEST_INDEX],
-                                          &numMarksPrinted2, sharedData.numOfProgressMarks,
-                                          sharedData.hashmarkInterval);
-                }
-            }
-
-            // join countPrefixThread back to main
-            if(pthread_join(countPrefixThread, NULL)){
-                cout << "countPrefixThread join error" << endl;
-            }
-
+        if (numMarksPrintedCountBar == sharedData.numOfProgressMarks) {
             // print out the amount of words in second file
             cout << "\nThere are " << sharedData.wordCountInFile[SHARED_TEST_INDEX]
-                 << " words in " << sharedData.filePath[SHARED_TEST_INDEX] <<  "." << endl;
+                 << " words in " << sharedData.filePath[SHARED_TEST_INDEX] << "." << endl;
         }
+
     } else{
         cout << "Invalid amount of arguments" << endl;
     }

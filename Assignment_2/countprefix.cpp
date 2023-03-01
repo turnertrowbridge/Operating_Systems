@@ -9,9 +9,16 @@ void* dequeuePrefixAndCount(void *threadarg) {
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA *) threadarg;
 
-    // set outPutFile
+    // busy wait
+    while(!sharedData->taskCompleted[SHARED_VOCAB_INDEX]) {
+    }
+
+    cout << "countPrefix started" << endl;
+
+    // set outputFile
     ofstream outputFile(OUTPUTFILE_NAME);
     sharedData->numOfProcessedPrefixes = 0;
+
     while(sharedData->prefixQueue.size() > 0 || !sharedData->taskCompleted[SHARED_TEST_INDEX]) {
         if(sharedData->prefixQueue.size() > 0) {
 

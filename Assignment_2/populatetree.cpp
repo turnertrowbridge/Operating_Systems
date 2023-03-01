@@ -14,6 +14,7 @@ void* populateTree(void *threadarg) {
     // file stream
     ifstream addstream(sharedData->filePath[SHARED_VOCAB_INDEX]);
 
+
     if (addstream.fail()){
         cout << "Unable to open <<" << sharedData->filePath[SHARED_VOCAB_INDEX] << ">>" << endl;
         exit(EXIT_FAILURE);
@@ -22,8 +23,6 @@ void* populateTree(void *threadarg) {
         stat(sharedData->filePath[SHARED_VOCAB_INDEX], &fileStats);
         sharedData->totalNumOfCharsInFile[SHARED_VOCAB_INDEX] = fileStats.st_size;
 
-        long wordCount = 0;
-
         // reads file line by line and adds to tree word by word
         while (getline(addstream, line)) {
             char *line_c = const_cast<char *>(line.c_str());
@@ -31,13 +30,14 @@ void* populateTree(void *threadarg) {
             while (word != nullptr) {
                 sharedData->dictRootNode->add(word);
                 word = strtok(nullptr, sharedData->delimiters);
-                wordCount++;
+                sharedData->wordCountInFile[SHARED_VOCAB_INDEX] += 1;
             }
             // gets chars per line plus line feed
             sharedData->numOfCharsReadFromFile[SHARED_VOCAB_INDEX] += line.size() + 1;
+
         }
-        sharedData->wordCountInFile[SHARED_VOCAB_INDEX] = wordCount;
+        sharedData->taskCompleted[SHARED_VOCAB_INDEX] = true;
+        pthread_exit(0);
     }
 
-    pthread_exit(0);
 }

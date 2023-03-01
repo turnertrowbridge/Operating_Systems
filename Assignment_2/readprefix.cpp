@@ -8,13 +8,21 @@
 void* readPrefixToQueue(void *threadarg) {
     SHARED_DATA *sharedData;
     sharedData = (SHARED_DATA*) threadarg;
+
+
+    // busy wait
+    while(!sharedData->taskCompleted[SHARED_VOCAB_INDEX]) {
+    }
+
+    cout << "readPrefix started" << endl;
+
+
     struct stat fileStats;
     string line;    // stores line data
     sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] = 0;
 
     // reads the third command line argument
     ifstream countstream(sharedData->filePath[SHARED_TEST_INDEX]);
-
     if (countstream.fail()){
         cout << "Unable to open <<" << sharedData->filePath[SHARED_TEST_INDEX] << ">>" << endl;
         exit(EXIT_FAILURE);
@@ -43,7 +51,7 @@ void* readPrefixToQueue(void *threadarg) {
             }
         }
         sharedData->wordCountInFile[SHARED_TEST_INDEX] = wordCount;
+        sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
+        pthread_exit(0);
     }
-    sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
-    pthread_exit(0);
 };
