@@ -12,7 +12,6 @@
 * Shared constants and data structures among threads
 **/
 #define NUMOFFILES 2
-#define DICTSRCFILEINDEX 0
 #define VOCAB_FILE_INDEX 1
 #define TEST_FILE_INDEX 2
 
@@ -63,8 +62,9 @@ typedef struct {
     */
     const char *filePath[NUMOFFILES];
 
+    // separates words
     const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";
-// separates words
+
 
     /** store total number of characters in files
     totalNumOfCharsInFile[SHARED_VOCAB_INDEX]
@@ -107,18 +107,18 @@ typedef struct {
     * number of characters in the line, plus one to include the line feed
     * character at the end of each line of a Unix text file.
     *
-    * numOfCharsReadFromFile[DICTSRCFILEINDEX]
+    * numOfCharsReadFromFile[SHARED_VOCAB_INDEX]
     * - number of chars read in and processed from
     * the dictionary vocabulary file
-    * numOfCharsReadFromFile[TEST_FILE_INDEX]
+    * numOfCharsReadFromFile[SHARED_TEST_INDEX]
     * - number of chars read in and processed from
     * the test file, you may NOT this number for this assignment
     */
     long numOfCharsReadFromFile[NUMOFFILES];
     /**
-    * wordCountInFile[DICTSRCFILEINDEX]
+    * wordCountInFile[SHARED_VOCAB_INDEX]
     * - number of total words in the dictionary vocabulary file.
-    * wordCountInFile[TEST_FILE_INDEX]
+    * wordCountInFile[SHARED_TEST_INDEX]
     * - number of total words in the test file
     */
     long wordCountInFile[NUMOFFILES];
@@ -144,7 +144,7 @@ typedef struct {
     * readprefix and countprefix threads have to wait for populatetree
     * thread logic to complete before executing their thread logic
     *
-    * taskCompleted[DICTSRCFILEINDEX]
+    * taskCompleted[SHARED_VOCAB_INDEX]
     * - boolean flag to indicate whether the tree population
     * thread has completed the task: read words from the
     * dictionary source file and populate the tree
@@ -153,7 +153,7 @@ typedef struct {
     * populatetree thread to true only after the main thread fully displays
     * the progress bar upon the completion of the thread logic
     *
-    * taskCompleted[TEST_FILE_INDEX]
+    * taskCompleted[SHARED_TEST_INDEX]
     * - boolean flag to indicate whether the readprefix
     * thread has completed the task: read prefixes from the
     * a test file, and insert each prefix to a queue

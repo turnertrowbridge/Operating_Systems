@@ -13,8 +13,6 @@ void* dequeuePrefixAndCount(void *threadarg) {
     while(!sharedData->taskCompleted[SHARED_VOCAB_INDEX]) {
     }
 
-    cout << "countPrefix started" << endl;
-
     // set outputFile
     ofstream outputFile(OUTPUTFILE_NAME);
     sharedData->numOfProcessedPrefixes = 0;
@@ -22,15 +20,17 @@ void* dequeuePrefixAndCount(void *threadarg) {
     while(sharedData->prefixQueue.size() > 0 || !sharedData->taskCompleted[SHARED_TEST_INDEX]) {
         if(sharedData->prefixQueue.size() > 0) {
 
-            // lock sharedData to access queue
-            pthread_mutex_lock(&sharedData->queue_mutex);
-
             // get prefix from front of queue and copy it to word
             string front = sharedData->prefixQueue.front();
             char frontChar[sharedData->prefixQueue.front().size()];
             strcpy(frontChar, sharedData->prefixQueue.front().c_str());
             const char *prefix = frontChar;
+
+            // lock sharedData, pop word from queue, and re-lock sharedData
+            pthread_mutex_lock(&sharedData->queue_mutex);
             sharedData->prefixQueue.pop();
+            pthread_mutex_unlock(&sharedData->queue_mutex);
+
 
             // count number of words that start with prefix
             int count = 0;
@@ -44,9 +44,6 @@ void* dequeuePrefixAndCount(void *threadarg) {
 
             // count prefixes searched
             sharedData->numOfProcessedPrefixes += 1;
-
-            // unlock sharedData
-            pthread_mutex_unlock(&sharedData->queue_mutex);
         }
     }
     outputFile.close();

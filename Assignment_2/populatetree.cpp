@@ -39,5 +39,4 @@ void* populateTree(void *threadarg) {
         sharedData->taskCompleted[SHARED_VOCAB_INDEX] = true;
         pthread_exit(0);
     }
-
 }

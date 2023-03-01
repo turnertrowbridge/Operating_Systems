@@ -14,12 +14,9 @@ void* readPrefixToQueue(void *threadarg) {
     while(!sharedData->taskCompleted[SHARED_VOCAB_INDEX]) {
     }
 
-    cout << "readPrefix started" << endl;
-
-
+    // create stat struct
     struct stat fileStats;
     string line;    // stores line data
-    sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] = 0;
 
     // reads the third command line argument
     ifstream countstream(sharedData->filePath[SHARED_TEST_INDEX]);
@@ -44,13 +41,14 @@ void* readPrefixToQueue(void *threadarg) {
                     pthread_mutex_lock(&sharedData->queue_mutex);
                     sharedData->prefixQueue.push(word);
                     pthread_mutex_unlock(&sharedData->queue_mutex);
+
                     word = strtok(nullptr, sharedData->delimiters);
                     wordCount++;
+                    sharedData->wordCountInFile[SHARED_TEST_INDEX]++;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;
             }
         }
-        sharedData->wordCountInFile[SHARED_TEST_INDEX] = wordCount;
         sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
         pthread_exit(0);
     }

@@ -38,7 +38,7 @@ void printProgressBar(long readVals, long totalVals, int *numMarksPrinted, int n
 
 
 int main(int argc, char **argv) {
-    SHARED_DATA sharedData;  // shared data data structure
+    SHARED_DATA sharedData;  // initialize shared data struct
 
     int opt;
     optind = OPT_ARG_START_IDX; // get optional arguments starting at fourth index
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
                     sharedData.hashmarkInterval = optargInt;
                 } else {
                     cout << "Hash mark interval for progress must be a number, greater than 0,"
-                            " and less than or equal to 10";
+                            " and less than or equal to 10" << endl;
                     exit(EXIT_FAILURE);
                 }
                 break;
@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
                     sharedData.minNumOfWordsWithAPrefixForPrinting = optargInt;
                     break;
                 } else {
-                    cout << "Prefix print count must be a number greater than or equal to 1";
+                    cout << "Prefix print count must be a number greater than or equal to 1" << endl;
                     exit(EXIT_FAILURE);
                 }
             default:
@@ -94,7 +94,6 @@ int main(int argc, char **argv) {
     // get manual arguments
     if (argc > NUMOFFILES){
         sharedData.dictRootNode = new dictNode; // create root node and initialize pointers to nullptr
-
         // set file path names
         sharedData.filePath[SHARED_VOCAB_INDEX] = argv[VOCAB_FILE_INDEX];
         sharedData.filePath[SHARED_TEST_INDEX] = argv[TEST_FILE_INDEX];
@@ -103,10 +102,11 @@ int main(int argc, char **argv) {
         sharedData.taskCompleted[SHARED_VOCAB_INDEX] = false;
         sharedData.taskCompleted[SHARED_TEST_INDEX] = false;
 
+        // initialize values to 0
         sharedData.wordCountInFile[SHARED_VOCAB_INDEX] = 0;
         sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX] = 0;
-
-
+        sharedData.wordCountInFile[VOCAB_FILE_INDEX] = 0;
+        sharedData.numOfCharsReadFromFile[VOCAB_FILE_INDEX] = 0;
 
         // initialize threads and mutex
         pthread_t populateTreeThread;
@@ -115,18 +115,19 @@ int main(int argc, char **argv) {
         pthread_mutex_init(&sharedData.queue_mutex, NULL);
 
 
+        // create thread for populateTree function
         if (pthread_create(&populateTreeThread, NULL, &populateTree, &sharedData)){
             cout << "populateTreeThread error" << endl;
             exit(EXIT_FAILURE);
         }
 
-        // create readPrefixThread
+        // create thread for readPrefixToQueue function
         if (pthread_create(&readPrefixThread, NULL, &readPrefixToQueue, &sharedData)){
             cout << "readPrefixThread error" << endl;
             exit(EXIT_FAILURE);
         }
 
-        // create countPrefixThread
+        // create thread for dequeuePrefixAndCount function
         if (pthread_create(&countPrefixThread, NULL, &dequeuePrefixAndCount, &sharedData)){
             cout << "readPrefixThread error" << endl;
             exit(EXIT_FAILURE);
@@ -136,6 +137,7 @@ int main(int argc, char **argv) {
         // print progress bar for reading and counting prefix
         int numMarksPrintedPopulateBar = 0;    // counts num of progressMarks printed so far
         while (numMarksPrintedPopulateBar != sharedData.numOfProgressMarks) {
+            // waits for totalNumOfCharsInFile to be set first
             if(sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX] != 0) {
                 printProgressBar(sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
                                  sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
@@ -155,6 +157,7 @@ int main(int argc, char **argv) {
         // print progress bar for reading and counting prefix
         int numMarksPrintedCountBar = 0;
         while (numMarksPrintedCountBar != sharedData.numOfProgressMarks) {
+            // waits for readPrefixThread to be completed (because it needs total number of words to calculate progress)
             if(sharedData.taskCompleted[SHARED_TEST_INDEX]) {
                 printProgressBar(sharedData.numOfProcessedPrefixes,
                                  sharedData.wordCountInFile[SHARED_TEST_INDEX],
