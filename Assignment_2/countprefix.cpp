@@ -11,7 +11,8 @@ void* dequeuePrefixAndCount(void *threadarg) {
 
     // set outPutFile
     ofstream outputFile(OUTPUTFILE_NAME);
-    while(sharedData->prefixQueue.size() > 0 || sharedData->taskCompleted[SHARED_TEST_INDEX] != true) {
+    sharedData->numOfProcessedPrefixes = 0;
+    while(sharedData->prefixQueue.size() > 0 || !sharedData->taskCompleted[SHARED_TEST_INDEX]) {
         if(sharedData->prefixQueue.size() > 0) {
 
             // lock sharedData to access queue
@@ -21,18 +22,21 @@ void* dequeuePrefixAndCount(void *threadarg) {
             string front = sharedData->prefixQueue.front();
             char frontChar[sharedData->prefixQueue.front().size()];
             strcpy(frontChar, sharedData->prefixQueue.front().c_str());
-            const char *word = frontChar;
+            const char *prefix = frontChar;
             sharedData->prefixQueue.pop();
 
-            // count number of words with word
+            // count number of words that start with prefix
             int count = 0;
-            dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(word);
+            dictNode *end = sharedData->dictRootNode->findEndingNodeOfAStr(prefix);
             end->countWordsStartingFromANode(count);
 
             // output words to file if the count is greater than or equal to specified minNumOfWordsWithPrefix
             if (count >= sharedData->minNumOfWordsWithAPrefixForPrinting){
-                outputFile << word << " " << count << endl;
+                outputFile << prefix << " " << count << endl;
             }
+
+            // count prefixes searched
+            sharedData->numOfProcessedPrefixes += 1;
 
             // unlock sharedData
             pthread_mutex_unlock(&sharedData->queue_mutex);

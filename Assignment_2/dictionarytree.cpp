@@ -26,7 +26,7 @@ bool dictNode::add(const char *wordBeingInserted) {
         if (this->next[charIndex]){
             return false;
         } else {
-            return this->next[charIndex] = new dictNode();
+            return (this->next[charIndex] = new dictNode());
         }
     }
 

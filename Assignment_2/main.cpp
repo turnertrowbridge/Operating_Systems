@@ -19,7 +19,7 @@
 
 using namespace std;
 
-void printProgressBar(double readChars, double totalChars, int *numMarksPrinted, int numReqMarks, int hashInterval){
+void printProgressBarPopulate(double readChars, double totalChars, int *numMarksPrinted, int numReqMarks, int hashInterval){
     // calculate progress
     double percentage = readChars / totalChars;
 
@@ -32,6 +32,21 @@ void printProgressBar(double readChars, double totalChars, int *numMarksPrinted,
         }else {
             cout << "-";
             fflush(stdout);
+        }
+    }
+}
+
+void printProgressBarCount(double processedPrefixes, double totalWordCount, int *numMarksPrinted, int numReqMarks, int hashInterval){
+    // calculate progress
+    double percentage = processedPrefixes / totalWordCount;
+
+    int numMarks = percentage * numReqMarks;
+    int marksNeeded = numMarks - *numMarksPrinted;
+    for (int i = 0; i < marksNeeded; i++, (*numMarksPrinted)++){
+        if ((*numMarksPrinted + 1) % hashInterval == 0){
+            cout.flush() << "#";
+        }else {
+            cout.flush() << "-";
         }
     }
 }
@@ -118,7 +133,7 @@ int main(int argc, char **argv) {
         // print progress bar for reading and counting prefix
         int numMarksPrinted1 = 0;    // counts num of progressMarks printed so far
         while (numMarksPrinted1 != sharedData.numOfProgressMarks) {
-            printProgressBar((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
+            printProgressBarPopulate((double)sharedData.numOfCharsReadFromFile[SHARED_VOCAB_INDEX],
                              (double)sharedData.totalNumOfCharsInFile[SHARED_VOCAB_INDEX],
                              &numMarksPrinted1, sharedData.numOfProgressMarks,
                              sharedData.hashmarkInterval);
@@ -145,18 +160,19 @@ int main(int argc, char **argv) {
                 exit(EXIT_FAILURE);
             }
 
-            // print progress bar for reading and counting prefix
-            int numMarksPrinted2 = 0;
-            while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
-                printProgressBar((double) sharedData.numOfCharsReadFromFile[SHARED_TEST_INDEX],
-                                 (double) sharedData.totalNumOfCharsInFile[SHARED_TEST_INDEX],
-                                 &numMarksPrinted2, sharedData.numOfProgressMarks,
-                                 sharedData.hashmarkInterval);
-            }
 
             // join readPrefixThread back to main
             if(pthread_join(readPrefixThread, NULL)){
                 cout << "readPrefixThread join error" << endl;
+            } else {
+                // print progress bar for reading and counting prefix
+                int numMarksPrinted2 = 0;
+                while (numMarksPrinted2 != sharedData.numOfProgressMarks) {
+                    printProgressBarCount((double) sharedData.numOfProcessedPrefixes,
+                                          (double) sharedData.wordCountInFile[SHARED_TEST_INDEX],
+                                          &numMarksPrinted2, sharedData.numOfProgressMarks,
+                                          sharedData.hashmarkInterval);
+                }
             }
 
             // join countPrefixThread back to main

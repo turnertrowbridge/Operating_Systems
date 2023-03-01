@@ -11,6 +11,7 @@ void* populateTree(void *threadarg) {
     struct stat fileStats;
     string line;    // stores line data
 
+    // file stream
     ifstream addstream(sharedData->filePath[SHARED_VOCAB_INDEX]);
 
     if (addstream.fail()){
@@ -21,6 +22,7 @@ void* populateTree(void *threadarg) {
         stat(sharedData->filePath[SHARED_VOCAB_INDEX], &fileStats);
         sharedData->totalNumOfCharsInFile[SHARED_VOCAB_INDEX] = fileStats.st_size;
 
+        long wordCount = 0;
 
         // reads file line by line and adds to tree word by word
         while (getline(addstream, line)) {
@@ -29,11 +31,12 @@ void* populateTree(void *threadarg) {
             while (word != nullptr) {
                 sharedData->dictRootNode->add(word);
                 word = strtok(nullptr, sharedData->delimiters);
-                sharedData->wordCountInFile[SHARED_VOCAB_INDEX] += 1;
+                wordCount++;
             }
             // gets chars per line plus line feed
             sharedData->numOfCharsReadFromFile[SHARED_VOCAB_INDEX] += line.size() + 1;
         }
+        sharedData->wordCountInFile[SHARED_VOCAB_INDEX] = wordCount;
     }
 
     pthread_exit(0);

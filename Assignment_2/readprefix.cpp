@@ -10,6 +10,7 @@ void* readPrefixToQueue(void *threadarg) {
     sharedData = (SHARED_DATA*) threadarg;
     struct stat fileStats;
     string line;    // stores line data
+    sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] = 0;
 
     // reads the third command line argument
     ifstream countstream(sharedData->filePath[SHARED_TEST_INDEX]);
@@ -22,7 +23,9 @@ void* readPrefixToQueue(void *threadarg) {
         stat(sharedData->filePath[SHARED_TEST_INDEX], &fileStats);
         sharedData->totalNumOfCharsInFile[SHARED_TEST_INDEX] = fileStats.st_size;
 
-        // reads file line by line and set words
+        long wordCount = 0;
+
+        // reads file line by line, gets words and counts total words
         while (getline(countstream, line)) {
             char *line_c = const_cast<char *>(line.c_str());
             char *word = strtok(line_c, sharedData->delimiters);
@@ -33,14 +36,13 @@ void* readPrefixToQueue(void *threadarg) {
                     pthread_mutex_lock(&sharedData->queue_mutex);
                     sharedData->prefixQueue.push(word);
                     pthread_mutex_unlock(&sharedData->queue_mutex);
-
                     word = strtok(nullptr, sharedData->delimiters);
-
-                    sharedData->wordCountInFile[SHARED_TEST_INDEX] += 1;
+                    wordCount++;
                 }
                 sharedData->numOfCharsReadFromFile[SHARED_TEST_INDEX] += line.size() + 1;
             }
         }
+        sharedData->wordCountInFile[SHARED_TEST_INDEX] = wordCount;
     }
     sharedData->taskCompleted[SHARED_TEST_INDEX] = true;
     pthread_exit(0);
