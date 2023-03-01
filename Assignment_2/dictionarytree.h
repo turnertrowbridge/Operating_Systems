@@ -2,7 +2,6 @@
 // Created by Turner Trowbridge on 2/26/23.
 //
 
-#include <unordered_map>
 #include <iostream>
 #include <cstring>
 
@@ -15,6 +14,11 @@ using namespace std;
 #define NCHILD 30 /* a-z, ', -, _, terminator of word */
 #define APOSTROPHE 39
 #define WORD_TERMINATOR '\0'
+
+#define APOSTROPHE_INDEX 26
+#define HYPHEN_INDEX 27
+#define UNDERSCORE_INDEX 28
+#define WORD_TERMINATOR_INDEX 29
 
 
 class dictNode {
@@ -30,13 +34,8 @@ public:
 
     // get all the number of words that branch off from a node
     void countWordsStartingFromANode(int &count);
-};
 
-class hashTable {
-private:
-    static const unordered_map<char, int> wordHashTable;
-public:
-    static int getHashMapValue(char c);
+    int getValueForChar(char c);
 };
 
 

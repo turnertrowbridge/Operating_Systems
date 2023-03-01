@@ -5,24 +5,13 @@
 #include "dictionarytree.h"
 
 
-// convert char to its corresponding int
-int hashTable::getHashMapValue(char c) {
-    if (wordHashTable.find(c) != wordHashTable.end()){
-        return wordHashTable.at((c));
-    }
-
-    cout << "\nerror at " << c << endl;
-    exit(EXIT_FAILURE);
-};
-
-
 // insert new word
 bool dictNode::add(const char *wordBeingInserted) {
     // convert char in word to predefined int
-    int charIndex = hashTable::getHashMapValue(*wordBeingInserted);
+    int charIndex = getValueForChar(*wordBeingInserted);
 
     // if end of string character found, add word terminator and return
-    if(charIndex == hashTable::getHashMapValue(WORD_TERMINATOR)){
+    if(charIndex == getValueForChar(WORD_TERMINATOR)){
         if (this->next[charIndex]){
             return false;
         } else {
@@ -42,7 +31,7 @@ bool dictNode::add(const char *wordBeingInserted) {
 
 dictNode* dictNode::findEndingNodeOfAStr(const char *strBeingSearched){
     // convert char in word to predefined int
-    int charIndex = hashTable::getHashMapValue(*strBeingSearched);
+    int charIndex = getValueForChar(*strBeingSearched);
     if (*strBeingSearched == WORD_TERMINATOR){
         return this;
     }
@@ -64,12 +53,12 @@ void dictNode::countWordsStartingFromANode(int &count) {
     }
 
     // increase count if word terminator is found
-    if (this->next[hashTable::getHashMapValue(WORD_TERMINATOR)]){
+    if (this->next[WORD_TERMINATOR_INDEX]){
         count++;
     }
 
     // loop through all child nodes to check to see if they have their own child nodes
-    for(auto node : this->next){
+    for(dictNode* node : this->next){
         // if a child node is found, recurse to search no more can be found
         if (node){
             node->countWordsStartingFromANode(count);
@@ -77,62 +66,22 @@ void dictNode::countWordsStartingFromANode(int &count) {
     }
 };
 
-
-const unordered_map<char, int> hashTable::wordHashTable = {
-        {'A', 0},
-        {'a', 0},
-        {'B', 1},
-        {'b', 1},
-        {'C', 2},
-        {'c', 2},
-        {'D', 3},
-        {'d', 3},
-        {'E', 4},
-        {'e', 4},
-        {'F', 5},
-        {'f', 5},
-        {'G', 6},
-        {'g', 6},
-        {'H', 7},
-        {'h', 7},
-        {'I', 8},
-        {'i', 8},
-        {'J', 9},
-        {'j', 9},
-        {'K', 10},
-        {'k', 10},
-        {'L', 11},
-        {'l', 11},
-        {'M', 12},
-        {'m', 12},
-        {'N', 13},
-        {'n', 13},
-        {'O', 14},
-        {'o', 14},
-        {'P', 15},
-        {'p', 15},
-        {'Q', 16},
-        {'q', 16},
-        {'R', 17},
-        {'r', 17},
-        {'S', 18},
-        {'s', 18},
-        {'T', 19},
-        {'t', 19},
-        {'U', 20},
-        {'u', 20},
-        {'V', 21},
-        {'v', 21},
-        {'W', 22},
-        {'w', 22},
-        {'X', 23},
-        {'x', 23},
-        {'Y', 24},
-        {'y', 24},
-        {'Z', 25},
-        {'z', 25},
-        {APOSTROPHE, 26},
-        {'-', 27},
-        {'_', 28},
-        {WORD_TERMINATOR, 29}
+int dictNode::getValueForChar(char c){
+    // gets the value for a char between 0 and 30
+    if(c >= 'a' && c <= 'z'){
+        return c - 'a';
+    } else if (c >= 'A' && c <= 'Z'){
+        return c - 'A';
+    }else if (c == APOSTROPHE){
+        return APOSTROPHE_INDEX;
+    }else if (c == '-') {
+        return HYPHEN_INDEX;
+    }else if(c == '_'){
+        return UNDERSCORE_INDEX;
+    }else if (c == WORD_TERMINATOR){
+        return WORD_TERMINATOR_INDEX;
+    }else {
+        cout << "Error at char " << c << endl;
+        exit(EXIT_FAILURE);
+    }
 };

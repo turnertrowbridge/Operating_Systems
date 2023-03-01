@@ -3,7 +3,6 @@
 //
 
 #include "readprefix.h"
-#include <cstring>
 
 void* readPrefixToQueue(void *threadarg) {
     SHARED_DATA *sharedData;
