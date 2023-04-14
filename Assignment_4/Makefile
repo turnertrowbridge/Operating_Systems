@@ -17,7 +17,7 @@ PROGRAM = cryptoexc
 
 # The program depends upon its object files
 $(PROGRAM) : $(OBJS)
-	$(CC) -o $(PROGRAM) $(OBJS)
+	$(CC) -pthread -o $(PROGRAM) $(OBJS)
 
 main.o : main.cpp
 	$(CC) $(CCFLAGS) main.cpp

@@ -22,13 +22,15 @@ void Blockchain::processTrade() {
         sem_wait(&sharedData->unconsumed); // down
 
         /* access mutex */
-        sem_wait(&sharedData->mutex); // down
-        Requests type = sharedData->tradeRequestQueue.front();
-        sharedData->tradeRequestQueue.pop();
-        cout << "consumed " << type << endl;
-        sem_post(&sharedData->mutex);
+        sem_wait(&sharedData->mutex); // lock
+        Requests type = sharedData->tradeRequestQueue.front(); // store the front of queue
+        sharedData->tradeRequestQueue.pop(); // remove front of queue
+        sharedData->requestsConsumed++; // increase total counter for requests consumed
+        cout << "consumed " << type << " # " << sharedData->requestsConsumed << endl;
+        sem_post(&sharedData->mutex); // unlock
+        /* end mutex access */
 
-        sem_post(&sharedData->availableSlots);
+        sem_post(&sharedData->availableSlots); // open a spot on blockchain for new coin
 
         usleep(sleepTime); // sleep for sleepTime ms
     }

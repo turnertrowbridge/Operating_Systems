@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 
     SharedData sharedData;
     sharedData.totalRequests = totalRequests;
-    sem_init(&sharedData.lastRequest, 0, 1);
+    sem_init(&sharedData.lastRequest, 0, 0);
 
     sem_init(&sharedData.availableSlots, 0, MAX_TRADE_REQUESTS);
 
@@ -73,9 +73,9 @@ int main(int argc, char **argv) {
     pthread_t blockchainXThread, blockchainYThread;
     pthread_create(&blockchainXThread, NULL, startProcessTrade, &blockchainX);
 
+
     sem_wait(&sharedData.lastRequest);
     cout << "lastrequest done" << endl;
-    while(true){};
 
     return EXIT_SUCCESS;
 }
