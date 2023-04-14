@@ -20,9 +20,9 @@ void* startProcessTrade(void *arg);
 
 
 class Blockchain{
-    int sleepTime;
+    int sleepTime; // simulate time it takes to process trade
     SharedData* sharedData;
-    Consumers consumer;
+    Consumers consumer; // blockchainX, blockChainY
 
 public:
     Blockchain(int sleepTime, SharedData* sharedData, Consumers consumer);

@@ -18,14 +18,15 @@
 void* startTradeService(void *arg);
 
 class TradeService{
-    sem_t coinCapacity; // used for tracking capacity
-    int sleepTime;
+    int coinCapacity; // total coins of a type allowed on blockchain at a time
+    int sleepTime;  // simulate time it takes for a trade to complete
     SharedData* sharedData;
-    Requests type;
+    Requests type;  // bitcoin, ethereum
 
 public:
     TradeService(int coinCapacity, int sleepTime, SharedData *sharedData, Requests type);
     void requestTrade();
+    static void* startTradeService(void * arg);
 };
 
 

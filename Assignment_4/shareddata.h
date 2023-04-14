@@ -11,8 +11,8 @@
 
 using namespace std;
 
-#define MAX_CAPACITY 16
-#define MAX_BITCOINS 5
+
+#define UNIQUE_COIN_TYPES 2
 #define REQUESTS_COUNTERS 3 // bitcoin, ethereum, total
 
 struct SharedData {
@@ -21,6 +21,8 @@ struct SharedData {
     sem_t mutex; // semaphore for sharedData access
     sem_t unconsumed; // semaphore for coins ready to be processed
     sem_t lastRequest;  // semaphore to signal all coins have been processed
+
+    sem_t coinCapacity[UNIQUE_COIN_TYPES]; // create multiple semaphores for the different unique coins
 
     queue<Requests> tradeRequestQueue;  // queue for requests
 

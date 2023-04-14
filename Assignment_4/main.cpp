@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#define DEFAULT_NUM_REQUESTS 100
+#define DEFAULT_NUM_REQUESTS 10
 #define DEFAULT_X_TRANSACTION_SPEED 0
 #define DEFAULT_Y_TRANSACTION_SPEED 0
 #define DEFAULT_BITCOIN_REQUEST_SPEED 0
@@ -51,7 +51,6 @@ int main(int argc, char **argv) {
     SharedData sharedData;
     sharedData.totalRequests = totalRequests;
     cout << totalRequests << endl;
-//    cout << sharedData.requestsProduced[0] << endl;
     sem_init(&sharedData.lastRequest, 0, 0);
 
     sem_init(&sharedData.availableSlots, 0, MAX_TRADE_REQUESTS);
@@ -60,13 +59,14 @@ int main(int argc, char **argv) {
 
     sem_init(&sharedData.unconsumed, 0, MAX_TRADE_REQUESTS);
 
-
     TradeService bitcoinService(MAX_BITCOIN_REQUESTS, bitcoinRequestSpeed, &sharedData, Bitcoin);
     TradeService ethereumService(MAX_TRADE_REQUESTS, ethereumRequestSpeed, &sharedData, Ethereum);
 
     // create threads for Bitcoin and Ethereum
     pthread_t bitcoinThread, ethereumThread;
-    pthread_create(&bitcoinThread, NULL, startTradeService, &bitcoinService);
+//    pthread_create(&bitcoinThread, NULL, TradeService::startTradeService, &bitcoinService);
+    pthread_create(&ethereumThread, NULL, TradeService::startTradeService, &ethereumService);
+
 
     Blockchain blockchainX(xTransactionSpeed, &sharedData, BlockchainX);
     Blockchain blockchainY(yTransactionSpeed, &sharedData, BlockchainY);
@@ -74,10 +74,9 @@ int main(int argc, char **argv) {
     // create threads for Blockchain X and Y
     pthread_t blockchainXThread, blockchainYThread;
     pthread_create(&blockchainXThread, NULL, startProcessTrade, &blockchainX);
-
+//    pthread_create(&blockchainYThread, NULL, startProcessTrade, &blockchainY);
 
     sem_wait(&sharedData.lastRequest);
-    cout << "lastrequest done" << endl;
 
     return EXIT_SUCCESS;
 }

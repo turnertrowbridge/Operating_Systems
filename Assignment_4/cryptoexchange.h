@@ -34,7 +34,7 @@ extern const char *consumerNames[];
  */
 typedef enum Requests {
   Bitcoin = 0,        // Bitcoin trade request
-  Ethereum = 1,       // Ethereum trade request 
+  Ethereum = 1,       // Ethereum trade request
   RequestTypeN = 2,   // number of trade request types
 } RequestType;
 

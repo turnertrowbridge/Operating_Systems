@@ -4,7 +4,7 @@
 
 #include "trade_service.h"
 
-void* startTradeService(void * arg){
+void* TradeService::startTradeService(void * arg){
     auto* trade = static_cast<TradeService*>(arg);
     cout << "Started trade service thread" << endl;
     trade->requestTrade();
@@ -12,8 +12,8 @@ void* startTradeService(void * arg){
 }
 
 
-TradeService::TradeService(int slots, int sleepTime, SharedData *sharedData, Requests type) {
-//    sem_init(&coinCapacity, 0, slots);
+TradeService::TradeService(int coinCapacity, int sleepTime, SharedData *sharedData, Requests type) {
+    this->coinCapacity = coinCapacity;
     this->sleepTime = sleepTime;
     this->sharedData = sharedData;
     this->type = type;
@@ -22,17 +22,19 @@ TradeService::TradeService(int slots, int sleepTime, SharedData *sharedData, Req
 
 
 void TradeService::requestTrade() {
-     while (sharedData->requestsProduced[TOTAL_COUNTER] < sharedData->totalRequests){
-        // produce item
+    sem_init(&sharedData->coinCapacity[type], 0, coinCapacity); // initialize semaphore for max coins allowed at once
+    while (sharedData->requestsProduced[TOTAL_COUNTER] < sharedData->totalRequests){
         /* check if there is room for type of coin */
-//        sem_wait(&coinCapacity); // down
+        sem_wait(&sharedData->coinCapacity[type]); // down
 
         /* check if there is space in the brokerage */
         sem_wait(&sharedData->availableSlots);
 
+
         /* access mutex */
         sem_wait(&sharedData->mutex); // lock
         sharedData->tradeRequestQueue.push(type); // add coin to queue
+        cout << "Added " << type << endl;
 
         /* counters */
         sharedData->requestsProduced[type]++; // increase counter for type of coin
@@ -44,11 +46,13 @@ void TradeService::requestTrade() {
         log_request_added(type, &sharedData->requestsProduced[type],
                           &sharedData->requestsInQueue[type]);
 
+        sem_post(&sharedData->unconsumed); // inform blockchain (consumer) that a new trade can be processed
+
         sem_post(&sharedData->mutex); // unlock
         /* end mutex access */
 
 
-        sem_post(&sharedData->unconsumed); // inform blockchain (consumer) that a new trade can be processed
+
 
         usleep(sleepTime); // sleep for sleepTime ms
     }
