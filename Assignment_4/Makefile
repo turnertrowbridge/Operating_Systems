@@ -10,7 +10,7 @@ CC=g++
 CCFLAGS=-std=c++11 -Wall -g3 -c -g
 
 # object files
-OBJS = main.o
+OBJS = blockchain.o request_service.o log.o main.o
 
 # Program name
 PROGRAM = cryptoexc
@@ -21,6 +21,15 @@ $(PROGRAM) : $(OBJS)
 
 main.o : main.cpp
 	$(CC) $(CCFLAGS) main.cpp
+
+log.o : log.c log.h
+	$(CC) $(CCFLAGS) log.c
+
+request_service.o : request_service.cpp request_service.h
+	$(CC) $(CCFLAGS) request_service.cpp
+
+blockchain.o : blockchain.cpp blockchain.h
+	$(CC) $(CCFLAGS) blockchain.cpp
 
 # Once things work, people frequently delete their object files.
 # If you use "make clean", this will do it for you.
