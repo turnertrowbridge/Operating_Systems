@@ -22,7 +22,7 @@ using namespace std;
 int main(int argc, char **argv) {
     int option; // opt arg checking
 
-    int totalRequests = DEFAULT_NUM_REQUESTS;    // total number of trade requests
+    unsigned int totalRequests = DEFAULT_NUM_REQUESTS;    // total number of trade requests
     int xTransactionSpeed = DEFAULT_X_TRANSACTION_SPEED;  // transaction speed of blockchain X
     int yTransactionSpeed = DEFAULT_Y_TRANSACTION_SPEED;  // transaction speed of blockchain Y
     int bitcoinRequestSpeed = DEFAULT_BITCOIN_REQUEST_SPEED;
@@ -50,6 +50,8 @@ int main(int argc, char **argv) {
 
     SharedData sharedData;
     sharedData.totalRequests = totalRequests;
+    cout << totalRequests << endl;
+//    cout << sharedData.requestsProduced[0] << endl;
     sem_init(&sharedData.lastRequest, 0, 0);
 
     sem_init(&sharedData.availableSlots, 0, MAX_TRADE_REQUESTS);
@@ -66,8 +68,8 @@ int main(int argc, char **argv) {
     pthread_t bitcoinThread, ethereumThread;
     pthread_create(&bitcoinThread, NULL, startTradeService, &bitcoinService);
 
-    Blockchain blockchainX(xTransactionSpeed, &sharedData);
-    Blockchain blockchainY(yTransactionSpeed, &sharedData);
+    Blockchain blockchainX(xTransactionSpeed, &sharedData, BlockchainX);
+    Blockchain blockchainY(yTransactionSpeed, &sharedData, BlockchainY);
 
     // create threads for Blockchain X and Y
     pthread_t blockchainXThread, blockchainYThread;

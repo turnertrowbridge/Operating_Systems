@@ -13,17 +13,21 @@ using namespace std;
 
 #define MAX_CAPACITY 16
 #define MAX_BITCOINS 5
+#define REQUESTS_COUNTERS 3 // bitcoin, ethereum, total
 
 struct SharedData {
 
-    sem_t availableSlots;
-    sem_t mutex;
-    sem_t unconsumed;
-    sem_t lastRequest;
-    queue<Requests> tradeRequestQueue;
-    int requestsProduced = 0;
-    int requestsConsumed = 0;
-    int totalRequests = 0;
+    sem_t availableSlots; // semaphore for slots available for producing coins
+    sem_t mutex; // semaphore for sharedData access
+    sem_t unconsumed; // semaphore for coins ready to be processed
+    sem_t lastRequest;  // semaphore to signal all coins have been processed
+
+    queue<Requests> tradeRequestQueue;  // queue for requests
+
+    unsigned int totalRequests;
+    unsigned int requestsInQueue[REQUESTS_COUNTERS] = {0}; // track items in queue
+    unsigned int requestsProduced[REQUESTS_COUNTERS] = {0};  // track total requests produced
+    unsigned int requestsConsumed[REQUESTS_COUNTERS] = {0};  // track total requests consumed
 };
 
 

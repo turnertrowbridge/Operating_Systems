@@ -22,7 +22,7 @@ TradeService::TradeService(int slots, int sleepTime, SharedData *sharedData, Req
 
 
 void TradeService::requestTrade() {
-     while (sharedData->requestsProduced < sharedData->totalRequests){
+     while (sharedData->requestsProduced[TOTAL_COUNTER] < sharedData->totalRequests){
         // produce item
         /* check if there is room for type of coin */
 //        sem_wait(&coinCapacity); // down
@@ -33,8 +33,17 @@ void TradeService::requestTrade() {
         /* access mutex */
         sem_wait(&sharedData->mutex); // lock
         sharedData->tradeRequestQueue.push(type); // add coin to queue
-        sharedData->requestsProduced++; // increase total counter of coins produced
-        cout << "produced " << type << " # " << sharedData->requestsProduced << endl;
+
+        /* counters */
+        sharedData->requestsProduced[type]++; // increase counter for type of coin
+        sharedData->requestsProduced[TOTAL_COUNTER]++; // increase total counter of coins produced
+        sharedData->requestsInQueue[type]++; // increase counter for type of coin in queue
+        sharedData->requestsInQueue[TOTAL_COUNTER]++; // increase total counter of coins in queue
+
+
+        log_request_added(type, &sharedData->requestsProduced[type],
+                          &sharedData->requestsInQueue[type]);
+
         sem_post(&sharedData->mutex); // unlock
         /* end mutex access */
 

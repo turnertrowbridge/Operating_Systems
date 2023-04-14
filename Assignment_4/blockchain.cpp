@@ -11,22 +11,32 @@ void* startProcessTrade(void* arg){
     pthread_exit(NULL);
 }
 
-Blockchain::Blockchain(int sleepTime, SharedData *sharedData) {
+Blockchain::Blockchain(int sleepTime, SharedData *sharedData, Consumers consumer) {
     this->sleepTime = sleepTime;
     this->sharedData = sharedData;
+    this->consumer = consumer;
 }
 
 void Blockchain::processTrade() {
-    while (sharedData->requestsConsumed < sharedData->totalRequests){
+    while (sharedData->requestsConsumed[TOTAL_COUNTER] < sharedData->totalRequests){
         /* block until something to consume */
         sem_wait(&sharedData->unconsumed); // down
 
         /* access mutex */
         sem_wait(&sharedData->mutex); // lock
+
         Requests type = sharedData->tradeRequestQueue.front(); // store the front of queue
         sharedData->tradeRequestQueue.pop(); // remove front of queue
-        sharedData->requestsConsumed++; // increase total counter for requests consumed
-        cout << "consumed " << type << " # " << sharedData->requestsConsumed << endl;
+
+        /* counters */
+        sharedData->requestsConsumed[type]++; // increase counter for type of coin
+        sharedData->requestsConsumed[TOTAL_COUNTER]++; // increase total counter for requests consumed
+        sharedData->requestsInQueue[type]--; // decrease counter for type of coin in queue
+        sharedData->requestsInQueue[TOTAL_COUNTER]--; // decrease total counter of coins in queue
+
+        log_request_removed(consumer, type, &sharedData->requestsConsumed[type],
+                            &sharedData->requestsInQueue[type]);
+
         sem_post(&sharedData->mutex); // unlock
         /* end mutex access */
 

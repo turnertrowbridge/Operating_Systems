@@ -5,12 +5,15 @@
 #ifndef ASSIGNMENT_4_TRADE_REQUEST_H
 #define ASSIGNMENT_4_TRADE_REQUEST_H
 
+#define TOTAL_COUNTER 2
+
 #include <semaphore.h>
 #include "cryptoexchange.h"
 #include "shareddata.h"
 #include <queue>
 #include <unistd.h>
 #include <iostream>
+#include "log.h"
 
 void* startTradeService(void *arg);
 
