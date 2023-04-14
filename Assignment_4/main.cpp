@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include "blockchain.h"
-#include "request_service.h"
+#include "trade_service.h"
 #include "queue"
 #include "shareddata.h"
 
@@ -52,22 +52,30 @@ int main(int argc, char **argv) {
     sharedData.totalRequests = totalRequests;
     sem_init(&sharedData.lastRequest, 0, 1);
 
-    sem_init(&sharedData.maxCapacity, 0, MAX_TRADE_REQUESTS);
+    sem_init(&sharedData.availableSlots, 0, MAX_TRADE_REQUESTS);
 
     sem_init(&sharedData.mutex, 0, 1);
 
+    sem_init(&sharedData.unconsumed, 0, MAX_TRADE_REQUESTS);
 
-    RequestService bitcoinService(MAX_BITCOIN_REQUESTS, bitcoinRequestSpeed, &sharedData, Bitcoin);
-    RequestService ethereumService(MAX_TRADE_REQUESTS, ethereumRequestSpeed, &sharedData, Ethereum);
+
+    TradeService bitcoinService(MAX_BITCOIN_REQUESTS, bitcoinRequestSpeed, &sharedData, Bitcoin);
+    TradeService ethereumService(MAX_TRADE_REQUESTS, ethereumRequestSpeed, &sharedData, Ethereum);
 
     // create threads for Bitcoin and Ethereum
     pthread_t bitcoinThread, ethereumThread;
-    pthread_create(&bitcoinThread, NULL,  bitcoinService.startService, &sharedData);
+    pthread_create(&bitcoinThread, NULL, startTradeService, &bitcoinService);
 
-    Blockchain blockchainX;
-    Blockchain blockchainY;
+    Blockchain blockchainX(xTransactionSpeed, &sharedData);
+    Blockchain blockchainY(yTransactionSpeed, &sharedData);
+
+    // create threads for Blockchain X and Y
+    pthread_t blockchainXThread, blockchainYThread;
+    pthread_create(&blockchainXThread, NULL, startProcessTrade, &blockchainX);
 
     sem_wait(&sharedData.lastRequest);
+    cout << "lastrequest done" << endl;
+    while(true){};
 
     return EXIT_SUCCESS;
 }

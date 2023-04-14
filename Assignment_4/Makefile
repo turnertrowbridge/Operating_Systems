@@ -10,7 +10,7 @@ CC=g++
 CCFLAGS=-std=c++11 -Wall -g3 -c -g
 
 # object files
-OBJS = blockchain.o request_service.o log.o main.o
+OBJS = blockchain.o trade_service.o log.o main.o
 
 # Program name
 PROGRAM = cryptoexc
@@ -25,8 +25,8 @@ main.o : main.cpp
 log.o : log.c log.h
 	$(CC) $(CCFLAGS) log.c
 
-request_service.o : request_service.cpp request_service.h
-	$(CC) $(CCFLAGS) request_service.cpp
+trade_service.o : trade_service.cpp trade_service.h
+	$(CC) $(CCFLAGS) trade_service.cpp
 
 blockchain.o : blockchain.cpp blockchain.h
 	$(CC) $(CCFLAGS) blockchain.cpp

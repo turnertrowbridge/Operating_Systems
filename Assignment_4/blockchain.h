@@ -9,15 +9,19 @@
 #include "cryptoexchange.h"
 #include "shareddata.h"
 #include <queue>
+#include <iostream>
+#include <unistd.h>
+
+void* startProcessTrade(void *arg);
 
 
 class Blockchain{
-    sem_t capacity; // used for tracking capacity
-    sem_t bitcoins; // used for tracking current bitcoins
-    sem_t ethereum; // used for tracking current ethereum
-    sem_t mutex; // used for locking SharedData
+    int sleepTime;
+    SharedData* sharedData;
 
-    int totalProcessed = 0;
+public:
+    Blockchain(int sleepTime, SharedData* sharedData);
+    void processTrade();
 };
 
 

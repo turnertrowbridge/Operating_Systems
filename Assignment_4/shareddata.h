@@ -16,12 +16,13 @@ using namespace std;
 
 struct SharedData {
 
-    sem_t maxCapacity;
+    sem_t availableSlots;
     sem_t mutex;
     sem_t unconsumed;
     sem_t lastRequest;
     queue<Requests> tradeRequestQueue;
     int requestsProduced = 0;
+    int requestsConsumed = 0;
     int totalRequests = 0;
 };
 
