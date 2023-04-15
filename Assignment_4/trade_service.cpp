@@ -6,7 +6,6 @@
 
 void* TradeService::startTradeService(void * arg){
     auto* trade = static_cast<TradeService*>(arg);
-    cout << "Started trade service thread" << endl;
     trade->requestTrade();
     pthread_exit(NULL);
 }
@@ -34,7 +33,6 @@ void TradeService::requestTrade() {
         /* access mutex */
         sem_wait(&sharedData->mutex); // lock
         sharedData->tradeRequestQueue.push(type); // add coin to queue
-        cout << "Added " << type << endl;
 
         /* counters */
         sharedData->requestsProduced[type]++; // increase counter for type of coin
@@ -43,8 +41,8 @@ void TradeService::requestTrade() {
         sharedData->requestsInQueue[TOTAL_COUNTER]++; // increase total counter of coins in queue
 
 
-        log_request_added(type, &sharedData->requestsProduced[type],
-                          &sharedData->requestsInQueue[type]);
+        log_request_added(type, sharedData->requestsProduced,
+                          sharedData->requestsInQueue);
 
         sem_post(&sharedData->unconsumed); // inform blockchain (consumer) that a new trade can be processed
 

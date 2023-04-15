@@ -14,6 +14,8 @@ using namespace std;
 
 #define UNIQUE_COIN_TYPES 2
 #define REQUESTS_COUNTERS 3 // bitcoin, ethereum, total
+#define NUM_BLOCKCHAINS 2
+
 
 struct SharedData {
 
@@ -30,6 +32,7 @@ struct SharedData {
     unsigned int requestsInQueue[REQUESTS_COUNTERS] = {0}; // track items in queue
     unsigned int requestsProduced[REQUESTS_COUNTERS] = {0};  // track total requests produced
     unsigned int requestsConsumed[REQUESTS_COUNTERS] = {0};  // track total requests consumed
+    unsigned int **requestConsumedPerBlockchain = new unsigned int * [NUM_BLOCKCHAINS];
 };
 
 

@@ -12,7 +12,6 @@
 #include "shareddata.h"
 #include <queue>
 #include <unistd.h>
-#include <iostream>
 #include "log.h"
 
 void* startTradeService(void *arg);

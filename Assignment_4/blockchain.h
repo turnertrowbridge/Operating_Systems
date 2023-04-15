@@ -11,7 +11,6 @@
 #include "cryptoexchange.h"
 #include "shareddata.h"
 #include <queue>
-#include <iostream>
 #include <unistd.h>
 #include "log.h"
 

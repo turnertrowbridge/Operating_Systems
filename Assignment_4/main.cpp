@@ -1,4 +1,3 @@
-#include <iostream>
 #include <unistd.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -16,6 +15,7 @@ using namespace std;
 #define DEFAULT_ETHEREUM_REQUEST_SPEED 0
 #define MAX_TRADE_REQUESTS 16
 #define MAX_BITCOIN_REQUESTS 5
+#define NUM_OF_COINS 2
 
 
 
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
     int bitcoinRequestSpeed = DEFAULT_BITCOIN_REQUEST_SPEED;
     int ethereumRequestSpeed = DEFAULT_ETHEREUM_REQUEST_SPEED;
 
-    while ((option = getopt(argc, argv, "r:x:y:b:e")) != -1){
+    while ((option = getopt(argc, argv, "r:x:y:b:e:")) != -1){
         switch (option){
             case 'r':
                 totalRequests = atoi(optarg);
@@ -50,7 +50,6 @@ int main(int argc, char **argv) {
 
     SharedData sharedData;
     sharedData.totalRequests = totalRequests;
-    cout << totalRequests << endl;
     sem_init(&sharedData.lastRequest, 0, 0);
 
     sem_init(&sharedData.availableSlots, 0, MAX_TRADE_REQUESTS);
@@ -62,9 +61,17 @@ int main(int argc, char **argv) {
     TradeService bitcoinService(MAX_BITCOIN_REQUESTS, bitcoinRequestSpeed, &sharedData, Bitcoin);
     TradeService ethereumService(MAX_TRADE_REQUESTS, ethereumRequestSpeed, &sharedData, Ethereum);
 
+    for (int i = 0; i < NUM_OF_COINS; i++) {
+        sharedData.requestConsumedPerBlockchain[i] = new unsigned int[NUM_OF_COINS];
+        for (int j = 0; j < 2; j++) {
+            sharedData.requestConsumedPerBlockchain[i][j]= 0;
+        }
+
+    }
+
     // create threads for Bitcoin and Ethereum
     pthread_t bitcoinThread, ethereumThread;
-//    pthread_create(&bitcoinThread, NULL, TradeService::startTradeService, &bitcoinService);
+    pthread_create(&bitcoinThread, NULL, TradeService::startTradeService, &bitcoinService);
     pthread_create(&ethereumThread, NULL, TradeService::startTradeService, &ethereumService);
 
 
@@ -73,10 +80,16 @@ int main(int argc, char **argv) {
 
     // create threads for Blockchain X and Y
     pthread_t blockchainXThread, blockchainYThread;
+
+
     pthread_create(&blockchainXThread, NULL, startProcessTrade, &blockchainX);
-//    pthread_create(&blockchainYThread, NULL, startProcessTrade, &blockchainY);
+    pthread_create(&blockchainYThread, NULL, startProcessTrade, &blockchainY);
 
     sem_wait(&sharedData.lastRequest);
+
+    log_production_history(sharedData.requestsProduced,
+                           sharedData.requestConsumedPerBlockchain);
+
 
     return EXIT_SUCCESS;
 }
