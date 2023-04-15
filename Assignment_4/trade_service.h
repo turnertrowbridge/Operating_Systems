@@ -15,8 +15,6 @@
 #include "log.h"
 #include "pthread.h"
 
-void* startTradeService(void *arg);
-
 class TradeService{
     int coinCapacity; // total coins of a type allowed on blockchain at a time
     int sleepTime;  // simulate time it takes for a trade to complete
@@ -25,8 +23,8 @@ class TradeService{
 
 public:
     TradeService(int coinCapacity, int sleepTime, SharedData *sharedData, Requests type);
+    static void* startTradeService(void * arg); // function for thread starting
     void requestTrade();
-    static void* startTradeService(void * arg);
 };
 
 

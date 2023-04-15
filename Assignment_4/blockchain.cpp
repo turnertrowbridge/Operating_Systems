@@ -4,7 +4,7 @@
 
 #include "blockchain.h"
 
-void* startProcessTrade(void* arg){
+void* Blockchain::startProcessTrade(void* arg){
     auto* trade = static_cast<Blockchain*>(arg);
     trade->processTrade();
     pthread_exit(NULL);
@@ -36,18 +36,19 @@ void Blockchain::processTrade() {
         sharedData->requestConsumedPerBlockchain[consumer][type]++; // increase counter for requests consumed in blockchain
 
 
-
-        log_request_removed(consumer, type, sharedData->requestsConsumed,
+        log_request_removed(consumer, type, sharedData->requestConsumedPerBlockchain[consumer],
                             sharedData->requestsInQueue);
 
-        sem_post(&sharedData->coinCapacity[type]); // open spot for coin on blockchain
-        sem_post(&sharedData->availableSlots); // open a spot on blockchain for new coin
 
         sem_post(&sharedData->mutex); // unlock
         /* end mutex access */
 
+        sem_post(&sharedData->coinCapacity[type]); // open spot for coin on blockchain
+        sem_post(&sharedData->availableSlots); // open a spot on blockchain for new coin
 
-        usleep(sleepTime); // sleep for sleepTime ms
+
+
+        usleep(sleepTime); // sleep for sleepTime ms, simulate time it would take to process and finish trade
     }
     sem_post(&sharedData->lastRequest);
 }

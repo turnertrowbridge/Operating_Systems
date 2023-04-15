@@ -16,9 +16,6 @@
 #include "pthread.h"
 
 
-void* startProcessTrade(void *arg);
-
-
 class Blockchain{
     int sleepTime; // simulate time it takes to process trade
     SharedData* sharedData;
@@ -26,6 +23,7 @@ class Blockchain{
 
 public:
     Blockchain(int sleepTime, SharedData* sharedData, Consumers consumer);
+    static void* startProcessTrade(void* arg); // function for thread starting
     void processTrade();
 };
 

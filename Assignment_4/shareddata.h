@@ -32,7 +32,7 @@ struct SharedData {
     unsigned int requestsInQueue[REQUESTS_COUNTERS] = {0}; // track items in queue
     unsigned int requestsProduced[REQUESTS_COUNTERS] = {0};  // track total requests produced
     unsigned int requestsConsumed[REQUESTS_COUNTERS] = {0};  // track total requests consumed
-    unsigned int **requestConsumedPerBlockchain = new unsigned int * [NUM_BLOCKCHAINS];
+    unsigned int **requestConsumedPerBlockchain = new unsigned int * [NUM_BLOCKCHAINS]; // 2D array to store stats
 };
 
 

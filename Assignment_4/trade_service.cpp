@@ -19,7 +19,6 @@ TradeService::TradeService(int coinCapacity, int sleepTime, SharedData *sharedDa
 }
 
 
-
 void TradeService::requestTrade() {
     sem_init(&sharedData->coinCapacity[type], 0, coinCapacity); // initialize semaphore for max coins allowed at once
     while (sharedData->requestsProduced[TOTAL_COUNTER] < sharedData->totalRequests){
@@ -44,15 +43,14 @@ void TradeService::requestTrade() {
         log_request_added(type, sharedData->requestsProduced,
                           sharedData->requestsInQueue);
 
-        sem_post(&sharedData->unconsumed); // inform blockchain (consumer) that a new trade can be processed
 
         sem_post(&sharedData->mutex); // unlock
         /* end mutex access */
 
+        sem_post(&sharedData->unconsumed); // inform blockchain (consumer) that a new trade can be processed
 
 
-
-        usleep(sleepTime); // sleep for sleepTime ms
+        usleep(sleepTime); // sleep for sleepTime ms, simulate time it would take to start trade
     }
 }
 
