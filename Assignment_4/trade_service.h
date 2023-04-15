@@ -13,6 +13,7 @@
 #include <queue>
 #include <unistd.h>
 #include "log.h"
+#include "pthread.h"
 
 void* startTradeService(void *arg);
 

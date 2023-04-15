@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include "stdlib.h"
 #include <pthread.h>
 #include <semaphore.h>
 #include "blockchain.h"
@@ -16,6 +17,7 @@ using namespace std;
 #define MAX_TRADE_REQUESTS 16
 #define MAX_BITCOIN_REQUESTS 5
 #define NUM_OF_COINS 2
+#define MICROSECONDS_IN_MILLISECONDS 1000
 
 
 
@@ -34,16 +36,16 @@ int main(int argc, char **argv) {
                 totalRequests = atoi(optarg);
                 break;
             case 'x':
-                xTransactionSpeed = atoi(optarg);
+                xTransactionSpeed = atoi(optarg) * MICROSECONDS_IN_MILLISECONDS;
                 break;
             case 'y':
-                yTransactionSpeed = atoi(optarg);
+                yTransactionSpeed = atoi(optarg) * MICROSECONDS_IN_MILLISECONDS;
                 break;
             case 'b':
-                bitcoinRequestSpeed = atoi(optarg);
+                bitcoinRequestSpeed = atoi(optarg) * MICROSECONDS_IN_MILLISECONDS;
                 break;
             case 'e':
-                ethereumRequestSpeed = atoi(optarg);
+                ethereumRequestSpeed = atoi(optarg) * MICROSECONDS_IN_MILLISECONDS;
                 break;
         }
     }
