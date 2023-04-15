@@ -64,8 +64,16 @@ int main(int argc, char **argv) {
         }
     }
 
+    /* initialize SharedData and it's values */
     SharedData sharedData;
     sharedData.totalRequests = totalRequests;
+    for (int i =0; i < REQUESTS_COUNTERS; i++){
+        sharedData.requestsInQueue[i] = 0;
+        sharedData.requestsProduced[i] = 0;
+        sharedData.requestsConsumed[i] = 0;
+    }
+    sharedData.requestsConsumedPerBlockchain = new unsigned int *[NUM_BLOCKCHAINS];
+
 
     /* initialize the semaphores */
     if (sem_init(&sharedData.lastRequest, 0, 0) != 0){ // barrier to stop main thread from existing too early
@@ -92,9 +100,9 @@ int main(int argc, char **argv) {
 
     /* set the entries in the consumption stat 2D array to 0 */
     for (int i = 0; i < NUM_OF_COINS; i++) {
-        sharedData.requestConsumedPerBlockchain[i] = new unsigned int[NUM_OF_COINS];
+        sharedData.requestsConsumedPerBlockchain[i] = new unsigned int[NUM_OF_COINS];
         for (int j = 0; j < 2; j++) {
-            sharedData.requestConsumedPerBlockchain[i][j]= 0;
+            sharedData.requestsConsumedPerBlockchain[i][j]= 0;
         }
 
     }
@@ -131,7 +139,7 @@ int main(int argc, char **argv) {
     sem_wait(&sharedData.lastRequest); // barrier to prevent main thread from ending before trades are processed
 
     log_production_history(sharedData.requestsProduced,
-                           sharedData.requestConsumedPerBlockchain);
+                           sharedData.requestsConsumedPerBlockchain);
 
 
     return EXIT_SUCCESS;

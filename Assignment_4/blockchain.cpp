@@ -33,10 +33,10 @@ void Blockchain::processTrade() {
         sharedData->requestsConsumed[TOTAL_COUNTER]++; // increase total counter for requests consumed
         sharedData->requestsInQueue[type]--; // decrease counter for type of coin in queue
         sharedData->requestsInQueue[TOTAL_COUNTER]--; // decrease total counter of coins in queue
-        sharedData->requestConsumedPerBlockchain[consumer][type]++; // increase counter for requests consumed in blockchain
+        sharedData->requestsConsumedPerBlockchain[consumer][type]++; // increase counter for requests consumed in blockchain
 
 
-        log_request_removed(consumer, type, sharedData->requestConsumedPerBlockchain[consumer],
+        log_request_removed(consumer, type, sharedData->requestsConsumedPerBlockchain[consumer],
                             sharedData->requestsInQueue);
 
 
